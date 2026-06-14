@@ -11,9 +11,9 @@ export const metricsData = [
         description: "Relates spike train timings and firing characteristics to specific behavioral epochs or events.",
         mathematics: "R_{behavior}(t) = \\int \\lambda(t) b(t) dt",
         papers: [
-          { 
-            title: "Truccolo et al., 2005 - A point process framework for relating neural spiking activity to spikes, predecessors, and extrinsic covariates", 
-            url: "https://doi.org/10.1152/jn.00697.2004" 
+          {
+            title: "Truccolo et al., 2005 - A point process framework for relating neural spiking activity to spikes, predecessors, and extrinsic covariates",
+            url: "https://doi.org/10.1152/jn.00697.2004"
           }
         ]
       },
@@ -23,9 +23,9 @@ export const metricsData = [
         description: "Measures the time elapsed between consecutive action potentials, providing insight into the temporal structure and regularity of firing.",
         mathematics: "ISI_i = t_{i} - t_{i-1}",
         papers: [
-          { 
-            title: "Softky & Koch, 1993 - The highly irregular firing of cortical cells is inconsistent with temporal integration", 
-            url: "https://doi.org/10.1523/JNEUROSCI.13-01-00034.1993" 
+          {
+            title: "Softky & Koch, 1993 - The highly irregular firing of cortical cells is inconsistent with temporal integration",
+            url: "https://doi.org/10.1523/JNEUROSCI.13-01-00034.1993"
           }
         ]
       },
@@ -35,9 +35,9 @@ export const metricsData = [
         description: "A standard temporal visualization of neural spiking activity where each action potential is aligned across time and trials.",
         mathematics: "n(t) = \\sum_{k=1}^K \\delta(t - t_k)",
         papers: [
-          { 
-            title: "Bair & Koch, 1996 - Temporal precision of cortical spike trains", 
-            url: "https://doi.org/10.1523/JNEUROSCI.16-04-01268.1996" 
+          {
+            title: "Bair & Koch, 1996 - Temporal precision of cortical spike trains",
+            url: "https://doi.org/10.1523/JNEUROSCI.16-04-01268.1996"
           }
         ]
       },
@@ -47,9 +47,9 @@ export const metricsData = [
         description: "A nonparametric test applied to compare the empirical distribution of spike trains (e.g., ISI distributions) against theoretical or reference distributions.",
         mathematics: "D_n = \\sup_x |F_n(x) - F(x)|",
         papers: [
-          { 
-            title: "Brown et al., 2002 - The time-rescaling theorem and its application to neural spike train data analysis", 
-            url: "https://doi.org/10.1162/08997660252741149" 
+          {
+            title: "Brown et al., 2002 - The time-rescaling theorem and its application to neural spike train data analysis",
+            url: "https://doi.org/10.1162/08997660252741149"
           }
         ]
       },
@@ -59,9 +59,9 @@ export const metricsData = [
         description: "A metric space for spike trains calculated by filtering the spike train with an exponential kernel and computing the Euclidean distance between the resulting traces.",
         mathematics: "D^2(t_c) = \\frac{1}{\\tau_{c}} \\int [f(t) - g(t)]^2 dt",
         papers: [
-          { 
-            title: "van Rossum, 2001 - A novel spike train distance", 
-            url: "https://doi.org/10.1162/089976601300014321" 
+          {
+            title: "van Rossum, 2001 - A novel spike train distance",
+            url: "https://doi.org/10.1162/089976601300014321"
           }
         ]
       },
@@ -70,10 +70,10 @@ export const metricsData = [
         name: "Schreiber Similarity",
         description: "A correlation-based measure of reliability or similarity between two spike trains that have been convolved with a Gaussian filter.",
         mathematics: "R_{12} = \\frac{\\vec{v}_1 \\cdot \\vec{v}_2}{|\\vec{v}_1| |\\vec{v}_2|}",
-        papers:[
-          { 
-            title: "Schreiber et al., 2003 - A new measure for spike train synchrony", 
-            url: "https://doi.org/10.1016/S0896-6273(03)00032-X" 
+        papers: [
+          {
+            title: "Schreiber et al., 2003 - A new measure for spike train synchrony",
+            url: "https://doi.org/10.1016/S0896-6273(03)00032-X"
           }
         ]
       },
@@ -83,9 +83,9 @@ export const metricsData = [
         description: "Measures the frequency at which one neuron fires relative to the firing time of a reference neuron, a hallmark of inferred functional connectivity.",
         mathematics: "C(\\tau) = \\int x(t) y(t+\\tau) dt",
         papers: [
-          { 
-            title: "Perkel, Gerstein, & Moore, 1967 - Neuronal spike trains and stochastic processes. II. Simultaneous spike trains", 
-            url: "https://doi.org/10.1016/S0006-3495(67)86254-4" 
+          {
+            title: "Perkel, Gerstein, & Moore, 1967 - Neuronal spike trains and stochastic processes. II. Simultaneous spike trains",
+            url: "https://doi.org/10.1016/S0006-3495(67)86254-4"
           }
         ]
       },
@@ -95,9 +95,9 @@ export const metricsData = [
         description: "Evaluates cross-correlation across different temporal scales and bin widths. This distinguishes precise synchronous spiking from slower rate covariations.",
         mathematics: "C_s(\\tau) = \\int (x(t) * h_s) \\cdot (y(t+\\tau) * h_s) dt",
         papers: [
-          { 
-            title: "Perkel, Gerstein, & Moore, 1967 - Neuronal spike trains and stochastic processes. II. Simultaneous spike trains", 
-            url: "https://doi.org/10.1016/S0006-3495(67)86254-4" 
+          {
+            title: "Perkel, Gerstein, & Moore, 1967 - Neuronal spike trains and stochastic processes. II. Simultaneous spike trains",
+            url: "https://doi.org/10.1016/S0006-3495(67)86254-4"
           }
         ]
       }
@@ -113,9 +113,9 @@ export const metricsData = [
         description: "Quantifies the discrepancy or error between a model's predicted membrane potential and empirically recorded biological Vm traces.",
         mathematics: "E = \\frac{1}{T} \\int (V_{model}(t) - V_{data}(t))^2 dt",
         papers: [
-          { 
-            title: "Jolivet et al., 2008 - Predicting spike timing of neocortical pyramidal neurons via quantitative models (Quantitative Single-Neuron Modeling Benchmark)", 
-            url: "https://doi.org/10.1007/s00422-008-0261-x" 
+          {
+            title: "Jolivet et al., 2008 - Predicting spike timing of neocortical pyramidal neurons via quantitative models (Quantitative Single-Neuron Modeling Benchmark)",
+            url: "https://doi.org/10.1007/s00422-008-0261-x"
           }
         ]
       },
@@ -125,9 +125,9 @@ export const metricsData = [
         description: "Tools and metrics for evaluating the subthreshold continuous voltage dynamics, capturing distinct hyperpolarizations and subthreshold oscillations.",
         mathematics: "V_{sub}(t) = V(t) \\text{ for } V(t) < V_{thresh}",
         papers: [
-          { 
-            title: "Yu & Ferster, 2010 - Membrane potential synchrony in primary visual cortex depends on spatial frequency of the visual stimulus", 
-            url: "https://doi.org/10.1016/j.neuron.2010.11.027" 
+          {
+            title: "Yu & Ferster, 2010 - Membrane potential synchrony in primary visual cortex depends on spatial frequency of the visual stimulus",
+            url: "https://doi.org/10.1016/j.neuron.2010.11.027"
           }
         ]
       },
@@ -137,9 +137,9 @@ export const metricsData = [
         description: "Derived to evaluate the trial-averaged membrane potential response directly phase-locked to a stimulus onset.",
         mathematics: "PSTH(t) = \\frac{1}{N \\Delta t} \\sum_{i=1}^N n_i(t, t+\\Delta t)",
         papers: [
-          { 
-            title: "Gerstner & Kistler, 2002 - Spiking Neuron Models: Single Neurons, Populations, Plasticity (Section 1.4: Population Activity and PSTH)", 
-            url: "https://doi.org/10.1017/CBO9780511815706" 
+          {
+            title: "Gerstner & Kistler, 2002 - Spiking Neuron Models: Single Neurons, Populations, Plasticity (Section 1.4: Population Activity and PSTH)",
+            url: "https://doi.org/10.1017/CBO9780511815706"
           }
         ]
       },
@@ -149,9 +149,9 @@ export const metricsData = [
         description: "Detects and enumerates discrete Post-Synaptic Potentials (excitatory or inhibitory) driving the overarching Vm fluctuations.",
         mathematics: "N_{PSP} = \\sum_{k} \\mathbb{I}(V(t_k) > V_{baseline} + \\theta)",
         papers: [
-          { 
-            title: "Richardson & Gerstner, 2005 - Synaptic shot noise and membrane potential fluctuations for background synaptic input", 
-            url: "https://doi.org/10.1152/jn.01065.2004" 
+          {
+            title: "Richardson & Gerstner, 2005 - Synaptic shot noise and membrane potential fluctuations for background synaptic input",
+            url: "https://doi.org/10.1152/jn.01065.2004"
           }
         ]
       },
@@ -161,9 +161,9 @@ export const metricsData = [
         description: "A statistical hypothesis test applied to subthreshold membrane potentials to determine directed functional connections between neurons.",
         mathematics: "F_{Y \\to X} = \\ln \\left( \\frac{\\Sigma_{X|X^-}}{\\Sigma_{X|X^-, Y^-}} \\right)",
         papers: [
-          { 
-            title: "Granger, 1969 - Investigating causal relations by econometric models and cross-spectral methods", 
-            url: "https://doi.org/10.2307/1912791" 
+          {
+            title: "Granger, 1969 - Investigating causal relations by econometric models and cross-spectral methods",
+            url: "https://doi.org/10.2307/1912791"
           }
         ]
       }
@@ -181,7 +181,7 @@ export const metricsData = [
         papers: [
           {
             title: "Schreiber, T. (2000) - Measuring information transfer.",
-            url:"https://doi.org/10.1103/PHYSREVLETT.85.461"
+            url: "https://doi.org/10.1103/PHYSREVLETT.85.461"
           }
         ]
       },
@@ -193,7 +193,7 @@ export const metricsData = [
         papers: [
           {
             title: "Schreiber, T. (2000) - Measuring information transfer.",
-            url:"https://doi.org/10.1103/PHYSREVLETT.85.461"
+            url: "https://doi.org/10.1103/PHYSREVLETT.85.461"
           }
         ]
       },
@@ -205,7 +205,7 @@ export const metricsData = [
         papers: [
           {
             title: "Schreiber, T. (2000) - Measuring information transfer.",
-            url:"https://doi.org/10.1103/PHYSREVLETT.85.461"
+            url: "https://doi.org/10.1103/PHYSREVLETT.85.461"
           }
         ]
       },
@@ -217,7 +217,7 @@ export const metricsData = [
         papers: [
           {
             title: "Schreiber, T. (2000) - Measuring information transfer.",
-            url:"https://doi.org/10.1103/PHYSREVLETT.85.461"
+            url: "https://doi.org/10.1103/PHYSREVLETT.85.461"
           }
         ]
       },
@@ -227,8 +227,10 @@ export const metricsData = [
         description: "A model-free, information-theoretic measure for detecting directed (time-asymmetric) transfer of information between time-series processes.",
         mathematics: "T_{X\\to Y} = \\sum p(y_{t}, y_{t-1}, x_{t-1}) \\log_2 \\frac{p(y_t | y_{t-1}, x_{t-1})}{p(y_t | y_{t-1})}",
         papers: [
-          {title: "Vicente, R., Wibral, M., Lindner, M., & Pipa, G. (2011) - Transfer entropy--a model-free measure of effective connectivity for the neurosciences.", url: 
-          "https://doi.org/10.1007/s10827-010-0262-3"}
+          {
+            title: "Vicente, R., Wibral, M., Lindner, M., & Pipa, G. (2011) - Transfer entropy--a model-free measure of effective connectivity for the neurosciences.", url:
+              "https://doi.org/10.1007/s10827-010-0262-3"
+          }
         ]
       }
     ]
