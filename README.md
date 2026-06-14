@@ -1,20 +1,36 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# The Metrics Archive
 
-# Run and deploy your AI Studio app
+The Metrics Archive is an interactive, web-based repository cataloging computational and mathematical metrics used in neuroscience and connectomics. 
 
-This contains everything you need to run your app locally.
+This platform serves as an educational reference, breaking down complex analytical tools used to quantify neural activity and network dynamics.
 
-View your app in AI Studio: https://ai.studio/apps/ba587f44-cdb4-4f08-b006-8ced15eafba3
+## Contents
 
-## Run Locally
+The archive explores five core categories of neural metrics:
+1. **Spike Trains**: Methods for analyzing action potential timing, regularity, and synchrony (e.g., ISI, KS Test, van Rossum Distance).
+2. **Membrane Potential**: Metrics evaluating subthreshold continuous voltage dynamics and discrepancies in computational models.
+3. **Information Theory**: Approaches to quantifying uncertainty and information transfer within neural signals (e.g., Entropy, Mutual Information, Transfer Entropy).
+4. **Neural Manifolds**: Dimensionality reduction and geometric analysis of neural population activity.
+5. **Oscillation Based**: Time-frequency analyses of synchronous activity (e.g., Phase-Locking Value, Power Spectral Density).
 
-**Prerequisites:**  Node.js
+Additionally, the archive provides **Empirical Examples**, demonstrating how these metrics perform across distinct physiological states such as *At Rest*, *In-Domain* processing, *Out-of-Domain*, and *Black Box* encounters.
 
+## Technical Stack
+
+This application is built as a Single Page Application (SPA) using:
+- Vanilla JavaScript
+- Vite
+- Tailwind CSS
+- KaTeX (Mathematical formatting)
+- Three.js (Interactive visualization)
+
+## Running Locally
 
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+   ```bash
+   npm install
+   ```
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
