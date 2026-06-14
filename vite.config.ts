@@ -4,7 +4,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: './',
+    base: '/The-Metrics-Archive/',
     plugins: [tailwindcss()],
     resolve: {
       alias: {
