@@ -1,0 +1,8 @@
+{
+  "name": "The Metrics Archive",
+  "description": "An elegant archive of metrics in neuroscience and connectomics. Includes detailed metrics explanations and practical examples.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

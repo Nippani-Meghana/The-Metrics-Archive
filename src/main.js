@@ -1,0 +1,393 @@
+import './index.css';
+import 'katex/dist/katex.min.css';
+import katex from 'katex';
+import { createIcons, icons } from 'lucide';
+import { metricsData, metricStateDifferences } from './data.js';
+import { createConnectomicsBackground } from './ConnectomicsBackground.js';
+
+export const mockExamplesList = [
+  { id: 'at-rest-0', stateKey: 'atRest', groupId: '1. At Rest', title: 'Placeholder Example 1', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
+  { id: 'in-domain-0', stateKey: 'inDomain', groupId: '2. In-Domain', title: 'Placeholder Example 1', body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt.' },
+  { id: 'in-domain-1', stateKey: 'inDomain', groupId: '2. In-Domain', title: 'Placeholder Example 2', body: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.' },
+  { id: 'out-of-domain-0', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 1', body: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet.' },
+  { id: 'out-of-domain-1', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 2', body: 'Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper.' },
+  { id: 'out-of-domain-2', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 3', body: 'Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui.' },
+  { id: 'black-box-model-0', stateKey: 'blackBoxModel', groupId: '4. Black Box Model', title: 'Placeholder Example 1', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' }
+];
+
+const allMetrics = metricsData.flatMap(section => section.metrics);
+
+let state = {
+  currentView: 'entry',
+  activeSectionId: metricsData[0].id,
+  viewMode: 'by-state',
+  selectedMetricId: allMetrics[0].id,
+  selectedExampleId: mockExamplesList[0].id,
+  showMathMap: {},
+  carouselIndices: {
+    '1. At Rest': 0,
+    '2. In-Domain': 0,
+    '3. Out-of-Domain': 0,
+    '4. Black Box Model': 0
+  }
+};
+
+let bgControls = null;
+
+function renderApp() {
+  let appContent = document.getElementById('app-content');
+  
+  if (!appContent) {
+    const root = document.getElementById('root');
+    root.innerHTML = `
+      <div class="min-h-screen relative overflow-hidden bg-white text-gray-900">
+        <div id="bg-container" class="fixed inset-0 z-0 pointer-events-none transition-opacity duration-1000"></div>
+        <div id="app-content" class="relative z-10 w-full h-screen overflow-y-auto"></div>
+      </div>
+    `;
+    appContent = document.getElementById('app-content');
+    bgControls = createConnectomicsBackground(document.getElementById('bg-container'));
+  }
+
+  appContent.innerHTML = `
+    ${state.currentView === 'entry' ? renderEntry() : ''}
+    ${state.currentView === 'metrics' ? renderMetrics() : ''}
+    ${state.currentView === 'examples' ? renderExamples() : ''}
+  `;
+
+  bgControls.setIsEntryPage(state.currentView === 'entry');
+
+  document.querySelectorAll('[data-math]').forEach(el => {
+    katex.render(el.getAttribute('data-math'), el, { displayMode: true, throwOnError: false });
+  });
+
+  createIcons({ icons });
+}
+
+function renderEntry() {
+  return `
+    <div class="h-screen flex flex-col items-center justify-center w-full max-w-screen-xl mx-auto px-6 md:px-8">
+      <div class="flex flex-col items-center justify-center space-y-10 md:space-y-12 w-full">
+        <div class="w-full flex items-center justify-center">
+          <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[6.5rem] whitespace-nowrap tracking-[0.02em] text-[#5F4A8B]/90 font-light mix-blend-multiply text-center leading-tight" style="font-family: var(--font-cormorant), serif;">
+            The Metrics Archive
+          </h1>
+        </div>
+        <div class="flex flex-row gap-6 md:gap-10 items-center justify-center">
+          <button data-action="navigate-metrics" class="whitespace-nowrap px-8 py-3 md:px-10 md:py-3.5 text-lg md:text-xl bg-transparent border border-[#8271A3]/80 text-[#8271A3] rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300" style="font-family: var(--font-droid), serif">The Metrics</button>
+          <button data-action="navigate-examples" class="whitespace-nowrap px-8 py-3 md:px-10 md:py-3.5 text-lg md:text-xl bg-transparent border border-[#8271A3]/80 text-[#8271A3] rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300" style="font-family: var(--font-droid), serif">The Examples</button>
+        </div>
+      </div>
+      <div class="absolute bottom-8 text-[11px] text-gray-400/80 tracking-widest uppercase bg-gray-50/50 px-3 py-1.5 rounded border border-gray-100/50" style="font-family: var(--font-fira), monospace">
+        Press 'C'
+      </div>
+    </div>
+  `;
+}
+
+function renderMetrics() {
+  const section = metricsData.find(s => s.id === state.activeSectionId);
+  return `
+    <div class="relative min-h-screen z-10 flex">
+      <div class="fixed top-8 right-8 z-50">
+        <button data-action="goto-examples" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Examples">
+          <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
+        </button>
+      </div>
+
+      <aside class="w-72 border-r border-gray-100 bg-white/80 backdrop-blur-md fixed h-full flex flex-col pt-12 shadow-sm">
+        <div class="px-8 pb-8">
+          <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors" style="font-family: var(--font-droid), serif">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
+          </button>
+        </div>
+        <nav class="flex-1 overflow-y-auto w-full px-4">
+          <ul class="space-y-2">
+            ${metricsData.map(s => `
+              <li>
+                <button data-action="set-active-section" data-id="${s.id}" class="w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ${state.activeSectionId === s.id ? 'bg-[var(--color-heading)] text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}" style="font-family: var(--font-lora), serif">
+                  ${s.title}
+                </button>
+              </li>
+            `).join('')}
+          </ul>
+        </nav>
+      </aside>
+
+      <main class="ml-72 flex-1 p-16 max-w-4xl">
+        <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <h1 class="text-4xl text-[var(--color-heading)] mb-12 border-b border-gray-200 pb-6" style="font-family: var(--font-lora), serif">${section.title}</h1>
+          <div class="space-y-16">
+            ${section.metrics.map(metric => renderMetricCard(metric)).join('')}
+          </div>
+        </div>
+      </main>
+    </div>
+  `;
+}
+
+function renderMetricCard(metric) {
+  const showMath = state.showMathMap[metric.id];
+  return `
+    <article class="bg-white/90 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-gray-50 transition-all duration-300 hover:shadow-md">
+      <div class="flex justify-between items-start mb-4">
+        <h2 class="text-2xl text-[var(--color-heading)]" style="font-family: var(--font-lora), serif">${metric.name}</h2>
+        ${metric.mathematics ? `
+          <button data-action="toggle-math" data-id="${metric.id}" class="text-sm border border-[var(--color-heading)] text-[var(--color-heading)] px-3 py-1.5 rounded-md hover:bg-[var(--color-heading)] hover:text-white transition-colors" style="font-family: var(--font-droid), serif">
+            ${showMath ? 'Hide Math' : 'Show Math'}
+          </button>
+        ` : ''}
+      </div>
+      <div class="text-lg text-gray-800 leading-relaxed space-y-6" style="font-family: var(--font-content), serif">
+        <p>${metric.description}</p>
+        ${metric.mathematics && showMath ? `
+          <div class="bg-gray-50 p-6 rounded-lg overflow-x-auto text-center border border-gray-100 my-6 shadow-inner animate-in fade-in slide-in-from-top-2">
+            <div data-math="${metric.mathematics.replace(/"/g, '&quot;')}"></div>
+          </div>
+        ` : ''}
+        ${metric.papers && metric.papers.length > 0 ? `
+          <div class="pt-4 mt-6 border-t border-gray-100">
+            <h3 class="text-sm uppercase tracking-widest text-gray-400 mb-4 font-sans flex items-center gap-2">
+              <i data-lucide="book-open" class="w-4 h-4"></i> Reference Literature
+            </h3>
+            <ul class="space-y-2">
+              ${metric.papers.map(paper => `
+                <li><a href="${paper.url}" class="text-[#5F4A8B] hover:text-black italic transition-colors text-base">${paper.title}</a></li>
+              `).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      </div>
+    </article>
+  `;
+}
+
+function getExampleSelectOptions() {
+  const renderOption = (e) => `<option value="${e.id}" ${state.selectedExampleId === e.id ? 'selected' : ''}>${e.title}</option>`;
+  return `
+    <optgroup label="1. At Rest">
+      ${mockExamplesList.filter(e => e.groupId === '1. At Rest').map(renderOption).join('')}
+    </optgroup>
+    <optgroup label="2. In-Domain">
+      ${mockExamplesList.filter(e => e.groupId === '2. In-Domain').map(renderOption).join('')}
+    </optgroup>
+    <optgroup label="3. Out-of-Domain">
+      ${mockExamplesList.filter(e => e.groupId === '3. Out-of-Domain').map(renderOption).join('')}
+    </optgroup>
+    <optgroup label="4. Black Box Model">
+      ${mockExamplesList.filter(e => e.groupId === '4. Black Box Model').map(renderOption).join('')}
+    </optgroup>
+  `;
+}
+
+function getMetricSelectOptions() {
+  return metricsData.map(section => `
+    <optgroup label="${section.title}">
+      ${section.metrics.map(metric => `<option value="${metric.id}" ${state.selectedMetricId === metric.id ? 'selected' : ''}>${metric.name}</option>`).join('')}
+    </optgroup>
+  `).join('');
+}
+
+function renderExamples() {
+  const selectedMetric = allMetrics.find(m => m.id === state.selectedMetricId);
+  const differences = metricStateDifferences[state.selectedMetricId] || { atRest: "Data not available.", inDomain: "Data not available.", outOfDomain: "Data not available.", blackBoxModel: "Data not available." };
+  const selectedExample = mockExamplesList.find(e => e.id === state.selectedExampleId) || mockExamplesList[0];
+
+  return `
+    <div class="relative min-h-screen z-10 flex justify-center">
+      <div class="fixed top-8 right-8 z-50">
+        <button data-action="goto-metrics" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Metrics">
+          <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
+        </button>
+      </div>
+
+      <div class="w-full max-w-6xl p-8 md:p-16">
+        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-12" style="font-family: var(--font-droid), serif">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
+        </button>
+
+        <header class="mb-12">
+          <h1 class="text-5xl text-[var(--color-heading)] mb-6 text-center" style="font-family: var(--font-lora), serif">Empirical Examples</h1>
+          <p class="text-center text-xl text-gray-600 max-w-2xl mx-auto mb-10" style="font-family: var(--font-content), serif">A cohesive walkthrough of the derived connectomic metrics applied across distinct cognitive and physiological network states.</p>
+
+          <div class="flex justify-center items-center gap-4 border-b border-gray-200 pb-4">
+            <div class="flex gap-2 bg-gray-100 p-1 rounded-lg">
+              <button data-action="set-view-mode" data-mode="by-state" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-state' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-700'}" style="font-family: var(--font-droid), serif">View by State</button>
+              <button data-action="set-view-mode" data-mode="by-metric" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-metric' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-700'}" style="font-family: var(--font-droid), serif">View by Metric</button>
+            </div>
+
+            ${state.viewMode === 'by-state' ? `
+              <div class="relative">
+                <select data-action="change-example" class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:border-[var(--color-heading)] focus:ring-1 focus:ring-[var(--color-heading)] text-sm" style="font-family: var(--font-droid), serif">
+                  ${getExampleSelectOptions()}
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+              </div>
+            ` : ''}
+
+            ${state.viewMode === 'by-metric' ? `
+              <div class="relative">
+                <select data-action="change-metric" class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:border-[var(--color-heading)] focus:ring-1 focus:ring-[var(--color-heading)] text-sm" style="font-family: var(--font-droid), serif">
+                  ${getMetricSelectOptions()}
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+              </div>
+            ` : ''}
+          </div>
+        </header>
+
+        ${state.viewMode === 'by-state' ? `
+          <div class="space-y-8">
+            <section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+              <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2 mb-8">
+                <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
+                <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
+              </div>
+              <div class="prose prose-lg max-w-none text-gray-800 leading-loose bg-[#FCFBFF] border border-[#E5E2EC] p-8 rounded-2xl shadow-sm mb-12" style="font-family: var(--font-content), serif">
+                <p>${selectedExample.body}</p>
+              </div>
+              
+              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
+              
+              <div class="space-y-12">
+                ${metricsData.map(section => `
+                  <div class="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E2EC]">
+                    <h4 class="text-xl text-[var(--color-heading)] border-b border-[#E5E2EC] pb-3 mb-6 font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
+                    <div class="space-y-6">
+                      ${section.metrics.map(m => {
+                         const diffText = (metricStateDifferences[m.id] && metricStateDifferences[m.id][selectedExample.stateKey]) || "Data not available.";
+                         return `
+                           <div class="border-b border-gray-100 pb-5 last:border-0 last:pb-0">
+                             <h5 class="text-gray-900 text-lg mb-2 font-medium" style="font-family: var(--font-lora), serif">${m.name}</h5>
+                             <p class="text-gray-700 text-base leading-relaxed" style="font-family: var(--font-fira), monospace">${diffText}</p>
+                           </div>
+                         `;
+                      }).join('')}
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+          </div>
+        ` : `
+          <div class="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
+             <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
+               <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
+               <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description}</p>
+             </div>
+             
+             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
+                ${renderStateCarouselCard('1. At Rest', [{ title: "Observation", body: differences.atRest || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'atRest')])}
+                ${renderStateCarouselCard('2. In-Domain', [{ title: "Observation", body: differences.inDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'inDomain')])}
+                ${renderStateCarouselCard('3. Out-of-Domain', [{ title: "Observation", body: differences.outOfDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'outOfDomain')])}
+                ${renderStateCarouselCard('4. Black Box Model', [{ title: "Observation", body: differences.blackBoxModel || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'blackBoxModel')])}
+             </div>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function renderStateCarouselCard(title, items) {
+  const currentIndex = state.carouselIndices[title] || 0;
+  const currentItem = items[currentIndex];
+  
+  return `
+    <div class="flex flex-col bg-[#FCFBFF] border border-[#E5E2EC] rounded-xl h-[420px] w-full shadow-sm overflow-hidden text-gray-800">
+      <div class="p-8 border-b border-[#E5E2EC]/60 flex-shrink-0 bg-white/50 backdrop-blur-sm h-[130px]">
+        <h2 class="text-[1.35rem] text-[var(--color-heading)] font-semibold leading-snug" style="font-family: var(--font-lora), serif">${title}</h2>
+      </div>
+
+      <div class="p-8 flex-grow overflow-hidden relative">
+        <div class="animate-in fade-in duration-500 h-full flex flex-col">
+          ${currentItem.subtitle ? `<div class="text-[10px] uppercase tracking-widest text-[#8271A3] mb-1 font-sans font-bold">${currentItem.subtitle}</div>` : ''}
+          <h3 class="text-[1.1rem] font-medium text-gray-900 mb-4" style="font-family: var(--font-lora), serif">${currentItem.title}</h3>
+          <p class="text-gray-600 leading-relaxed text-[14px]" style="font-family: var(--font-fira), monospace">${currentItem.body}</p>
+        </div>
+      </div>
+
+      <div class="h-16 flex-shrink-0 px-8 flex items-center justify-between pb-6 pt-2">
+        ${items.length > 1 ? `
+             <button data-action="carousel-prev" data-title="${title}" data-length="${items.length}" class="text-[#8271A3] hover:text-[var(--color-heading)] transition-colors p-1 flex items-center justify-center border border-transparent hover:border-[#8271A3]/30 rounded">
+               <span class="text-lg leading-none">&lt;</span>
+             </button>
+             <span class="opacity-90 tracking-[0.2em] text-[10px] text-[var(--color-heading)]" style="font-family: var(--font-fira), monospace">
+               ${currentIndex + 1} / ${items.length}
+             </span>
+             <button data-action="carousel-next" data-title="${title}" data-length="${items.length}" class="text-[#8271A3] hover:text-[var(--color-heading)] transition-colors p-1 flex items-center justify-center border border-transparent hover:border-[#8271A3]/30 rounded">
+               <span class="text-lg leading-none">&gt;</span>
+             </button>
+        ` : ''}
+      </div>
+    </div>
+  `;
+}
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const action = btn.getAttribute('data-action');
+  
+  if (action === 'navigate-metrics') {
+    state.currentView = 'metrics';
+    if (!state.activeSectionId) state.activeSectionId = metricsData[0].id;
+    renderApp();
+  } else if (action === 'navigate-examples') {
+    state.currentView = 'examples';
+    if (!state.selectedMetricId) state.selectedMetricId = allMetrics[0].id;
+    renderApp();
+  } else if (action === 'back-entry') {
+    state.currentView = 'entry';
+    renderApp();
+  } else if (action === 'goto-examples') {
+    state.currentView = 'examples';
+    const section = metricsData.find(s => s.id === state.activeSectionId);
+    if (section && section.metrics.length > 0) {
+      state.selectedMetricId = section.metrics[0].id;
+      state.viewMode = 'by-metric';
+    }
+    renderApp();
+  } else if (action === 'goto-metrics') {
+    state.currentView = 'metrics';
+    const section = metricsData.find(s => s.metrics.some(m => m.id === state.selectedMetricId));
+    if (section) {
+      state.activeSectionId = section.id;
+    }
+    renderApp();
+  } else if (action === 'set-active-section') {
+    state.activeSectionId = btn.getAttribute('data-id');
+    renderApp();
+  } else if (action === 'toggle-math') {
+    const id = btn.getAttribute('data-id');
+    state.showMathMap[id] = !state.showMathMap[id];
+    renderApp();
+  } else if (action === 'set-view-mode') {
+    state.viewMode = btn.getAttribute('data-mode');
+    renderApp();
+  } else if (action === 'carousel-prev') {
+    const title = btn.getAttribute('data-title');
+    const len = parseInt(btn.getAttribute('data-length'), 10);
+    const curr = state.carouselIndices[title] || 0;
+    state.carouselIndices[title] = (curr - 1 + len) % len;
+    renderApp();
+  } else if (action === 'carousel-next') {
+    const title = btn.getAttribute('data-title');
+    const len = parseInt(btn.getAttribute('data-length'), 10);
+    const curr = state.carouselIndices[title] || 0;
+    state.carouselIndices[title] = (curr + 1) % len;
+    renderApp();
+  }
+});
+
+document.addEventListener('change', e => {
+  if (e.target.matches('[data-action="change-example"]')) {
+    state.selectedExampleId = e.target.value;
+    renderApp();
+  } else if (e.target.matches('[data-action="change-metric"]')) {
+    state.selectedMetricId = e.target.value;
+    renderApp();
+  }
+});
+
+renderApp();
