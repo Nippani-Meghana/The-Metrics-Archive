@@ -342,99 +342,131 @@ export const examplesData = [
   {
     id: "at-rest",
     title: "1. At Rest",
-    description: "Analysis of the metrics when the neural population is at rest (spontaneous activity without explicit external task demands).",
-    content: "During periods of rest, we typically observe irregular spiking. The subthreshold membrane potential variance is dominated by balanced excitatory and inhibitory synaptic background noise. The effective dimensionality of the neural manifold is often higher during rest compared to stereotyped task execution, reflecting unconstrained exploration of the state space."
+    description: "Analysis of the metrics when the neural population is at rest",
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
   },
   {
     id: "in-domain",
     title: "2. In-Domain",
     description: "Metric evaluations when the network is engaged in its trained or stereotyped domain task.",
-    content: "When engaged in an in-domain task, the mutual information between the stimulus and the population response peaks. The neural manifold collapses into a lower-dimensional subspace required for the specific task dynamics. Phase-locking values increase between relevant specialized areas, orchestrating reliable and swift reaction times."
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
   },
   {
     id: "out-of-domain",
     title: "3. Out-of-Domain",
     description: "Observations of metric breakdowns when the system encounters novel, unpredicted stimuli.",
-    content: "In out-of-domain scenarios, we observe high ISI C_V as the network searches for appropriate responses. Mutual information regarding the unpredicted features remains low. The neural dimensionality expands slightly as previously silent nodes attempt to construct new representations, often accompanied by desynchronization (decreased PLV) in typical functional hubs."
+    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
   },
   {
     id: "black-box-model",
     title: "4. Black Box Model",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    description: "Observations of the metrics when a completely different network is compared against the groundtruth network.",
     content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
   }
 ];
 
 const defaultStateDiff = {
-  atRest: "Baseline spontaneous activity, largely decoupled from external environmental features.",
-  inDomain: "Highly structured and reliable activity corresponding directly to learned functional features.",
-  outOfDomain: "Erratic or uncalibrated variance reflecting processing of novel and unpredictable stimuli.",
+  atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+  outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   blackBoxModel: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 };
 
 export const metricStateDifferences = {
   "st-behavioral": {
-    atRest: "Spike timings show no distinct correlation to external behavioral events.",
-    inDomain: "Sharp tuning curves lock spiking patterns tightly to task-relevant behavioral epochs.",
-    outOfDomain: "Spurious spiking decoupled from coherent external task structure."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "st-isi": {
-    atRest: "Broad, near-exponential distribution indicative of Poisson-like spontaneous background spiking.",
-    inDomain: "Narrow, highly peaked distribution reflecting reliable, task-locked firing rates.",
-    outOfDomain: "High variance and irregular intervals lacking a consistent temporal structure."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "st-raster": defaultStateDiff,
   "st-ks-test": {
-    atRest: "Empirical distributions closely match a homogeneous Poisson reference.",
-    inDomain: "Distributions diverge significantly from baseline noise models, reflecting deterministic signal.",
-    outOfDomain: "Mixed distributions showing partial adherence to background noise models."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
-  "st-van-rossum": defaultStateDiff,
+  "st-van-rossum": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
   "st-schreiber": {
-    atRest: "Low cross-trial similarity due to spontaneous noise fluctuations.",
-    inDomain: "High structural similarity (R approaches 1) indicating highly reliable spike timing across trials.",
-    outOfDomain: "Dropping similarity indices indicating breakdown of response stereotypy."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
-  "st-cross-correlation": defaultStateDiff,
-  "st-multiscale-cross-correlation": defaultStateDiff,
-  "mp-vm-mismatch": defaultStateDiff,
-  "mp-vm-visualization": defaultStateDiff,
+  "st-cross-correlation": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
+  "st-multiscale-cross-correlation": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
+  "mp-vm-mismatch": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
+  "mp-vm-visualization": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
   "mp-psth": {
-    atRest: "Flat trace; no significant sustained depolarizations.",
-    inDomain: "Sharp, stereotyped transient depolarizations locked accurately to stimulus features.",
-    outOfDomain: "Delayed, wider, or highly variable transient depolarizations."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "mp-psp-counts": {
-    atRest: "Steady, balanced rate of background EPSPs and IPSPs.",
-    inDomain: "Targeted volleys of EPSPs immediately followed by governing IPSPs.",
-    outOfDomain: "Unbalanced barrages or failures of timely inhibitory recruitment."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
-  "mp-granger": defaultStateDiff,
+  "mp-granger": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
   "it-entropy": {
-    atRest: "High entropy due to a diverse repertoire of active background states.",
-    inDomain: "Slightly reduced entropy focusing on a subset of reliable response patterns.",
-    outOfDomain: "Increases marginally as network attempts unguided search strategies."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
-  "it-joint-entropy": defaultStateDiff,
-  "it-conditional-entropy": defaultStateDiff,
+  "it-joint-entropy": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
+  "it-conditional-entropy": {
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+  },
   "it-mutual-information": {
-    atRest: "Near zero; uncoupled to specific stimuli.",
-    inDomain: "Peaks sharply, indicating optimal precision encoding of the known stimulus.",
-    outOfDomain: "Remains relatively low; novelty attributes aren't robustly encoded."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "it-transfer-entropy": {
-    atRest: "Low directed flow of information between regions.",
-    inDomain: "Strong directed flow along established task-relevant pathways.",
-    outOfDomain: "Breakdown of typical feedforward pathways; increased unordered feedback."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "dimensionality": {
-    atRest: "High dimensionality; network explores a large portion of state space.",
-    inDomain: "Collapses to a low-dimensional manifold necessary for the specific computation.",
-    outOfDomain: "Expands as the system struggles to find a compact structural representation."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   },
   "phase-locking-value": {
-    atRest: "Baseline low-frequency synchronization across broad networks.",
-    inDomain: "Strong task-induced synchronization (e.g., Gamma band) between specific hubs.",
-    outOfDomain: "Desynchronization; typical task-related synchronous assemblies break down."
+    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
   }
 };
