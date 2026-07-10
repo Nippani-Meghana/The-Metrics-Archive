@@ -66,19 +66,52 @@ function renderApp() {
 
 function renderEntry() {
   return `
-    <div class="h-screen flex flex-col items-center justify-center w-full max-w-screen-xl mx-auto px-6 md:px-8">
-      <div class="flex flex-col items-center justify-center space-y-10 md:space-y-12 w-full">
-        <div class="w-full flex items-center justify-center px-4">
-          <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-[6.5rem] tracking-[0.02em] text-[#5F4A8B]/90 font-light mix-blend-multiply text-center leading-tight" style="font-family: var(--font-cormorant), serif;">
+    <div class="min-h-screen flex flex-col w-full px-6 md:px-12 py-8 relative">
+      <header class="absolute top-8 left-6 right-6 md:left-12 md:right-12 flex justify-between items-start z-20 text-gray-500/80 text-[11px] sm:text-xs tracking-wide" style="font-family: 'Times New Roman', Times, serif;">
+        <div>
+          <a href="mailto:nmeghana@carboncopies.org" title="nmeghana@carboncopies.org" class="hover:text-gray-900 transition-colors underline decoration-gray-500/30 underline-offset-2">Contact Us</a>
+        </div>
+        <div>
+          Established on 2026
+        </div>
+      </header>
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto z-20 pb-12 lg:pb-24">
+        <div class="w-full flex flex-col items-center text-center space-y-8 mb-16">
+          <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight text-gray-900 font-normal leading-tight" style="font-family: var(--font-cormorant), serif;">
             The Metrics Archive
           </h1>
+          <p class="text-lg md:text-xl lg:text-2xl text-gray-500 italic max-w-3xl leading-relaxed" style="font-family: var(--font-lora), serif;">
+            A repository indexing formal mathematical indices, statistical estimators, and empirical performance metrics utilized by the Brain Emulation Challenge.
+          </p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10 items-center justify-center">
-          <button data-action="navigate-metrics" class="w-full sm:w-auto px-8 py-3 md:px-10 md:py-3.5 text-lg md:text-xl bg-transparent border border-[#8271A3]/80 text-[#8271A3] rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300" style="font-family: var(--font-droid), serif">The Metrics</button>
-          <button data-action="navigate-examples" class="w-full sm:w-auto px-8 py-3 md:px-10 md:py-3.5 text-lg md:text-xl bg-transparent border border-[#8271A3]/80 text-[#8271A3] rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300" style="font-family: var(--font-droid), serif">The Examples</button>
+
+        <div class="flex flex-col md:flex-row w-full max-w-4xl gap-16 md:gap-8 justify-between">
+          <!-- The Metrics Section -->
+          <button data-action="navigate-metrics" class="flex-1 flex flex-col items-center text-center group transition-transform hover:-translate-y-1">
+            <h2 class="text-3xl md:text-4xl text-[#5F4A8B] mb-4" style="font-family: var(--font-cormorant), serif;">The Metrics</h2>
+            <div class="text-[10px] text-gray-400 tracking-[0.2em] uppercase mb-4 group-hover:text-gray-600 transition-colors" style="font-family: var(--font-fira), monospace;">
+              Directory & Formulations &rarr;
+            </div>
+            <p class="text-gray-500 text-sm md:text-base leading-relaxed max-w-xs" style="font-family: var(--font-lora), serif;">
+              A collection of formal metrics to evaluate spike trains, membrane dynamics, information theory, manifolds, and oscillations.
+            </p>
+          </button>
+
+          <!-- The Examples Section -->
+          <button data-action="navigate-examples" class="flex-1 flex flex-col items-center text-center group transition-transform hover:-translate-y-1">
+            <h2 class="text-3xl md:text-4xl text-[#5F4A8B] mb-4" style="font-family: var(--font-cormorant), serif;">The Examples</h2>
+            <div class="text-[10px] text-gray-400 tracking-[0.2em] uppercase mb-4 group-hover:text-gray-600 transition-colors" style="font-family: var(--font-fira), monospace;">
+              Dashboard Comparative &rarr;
+            </div>
+            <p class="text-gray-500 text-sm md:text-base leading-relaxed max-w-xs" style="font-family: var(--font-lora), serif;">
+              Practical examples of metrics applied across distinct experimental states.
+            </p>
+          </button>
         </div>
-      </div>
-      <div class="absolute bottom-8 text-[11px] text-gray-400/80 tracking-widest uppercase bg-gray-50/50 px-3 py-1.5 rounded border border-gray-100/50" style="font-family: var(--font-fira), monospace">
+      </main>
+
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-[11px] text-gray-400/80 tracking-widest uppercase bg-gray-50/50 px-3 py-1.5 rounded border border-gray-100/50 z-20" style="font-family: var(--font-fira), monospace">
         Press 'C'
       </div>
     </div>
@@ -88,24 +121,24 @@ function renderEntry() {
 function renderMetrics() {
   const section = metricsData.find(s => s.id === state.activeSectionId);
   return `
-    <div class="relative min-h-screen z-10 flex flex-col md:flex-row">
-      <div class="fixed top-6 md:top-8 right-6 md:right-8 z-50">
+    <div class="relative min-h-screen z-10 flex">
+      <div class="fixed top-8 right-8 z-50 flex gap-6 items-center">
         <button data-action="goto-examples" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Examples">
-          <i data-lucide="bookmark" class="w-8 h-8 md:w-10 md:h-10 fill-current group-hover:drop-shadow-md"></i>
+          <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
         </button>
       </div>
 
-      <aside class="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 bg-white/80 backdrop-blur-md static md:fixed h-auto md:h-full flex flex-col pt-6 md:pt-12 z-20 shadow-sm md:shadow-none">
-        <div class="px-6 md:px-8 pb-4 md:pb-8">
+      <aside class="w-72 border-r border-gray-100 bg-white/80 backdrop-blur-md fixed h-full flex flex-col pt-12 shadow-sm">
+        <div class="px-8 pb-8">
           <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors" style="font-family: var(--font-droid), serif">
             <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
           </button>
         </div>
-        <nav class="flex-1 overflow-x-auto md:overflow-y-auto w-full px-4 pb-4 md:pb-0 scrollbar-hide">
-          <ul class="flex flex-row md:flex-col gap-2 space-y-0 md:space-y-2">
+        <nav class="flex-1 overflow-y-auto w-full px-4">
+          <ul class="space-y-2">
             ${metricsData.map(s => `
-              <li class="flex-none md:w-full">
-                <button data-action="set-active-section" data-id="${s.id}" class="w-full text-left px-4 py-2 md:py-3 rounded-lg transition-all duration-300 whitespace-nowrap md:whitespace-normal ${state.activeSectionId === s.id ? 'bg-[var(--color-heading)] text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}" style="font-family: var(--font-lora), serif">
+              <li>
+                <button data-action="set-active-section" data-id="${s.id}" class="w-full text-left px-4 py-3 rounded-lg transition-all duration-300 ${state.activeSectionId === s.id ? 'bg-[var(--color-heading)] text-white shadow-md' : 'text-gray-600 hover:bg-gray-50'}" style="font-family: var(--font-lora), serif">
                   ${s.title}
                 </button>
               </li>
@@ -114,10 +147,10 @@ function renderMetrics() {
         </nav>
       </aside>
 
-      <main class="ml-0 md:ml-72 flex-1 p-6 md:p-16 max-w-4xl pt-8 md:pt-16">
+      <main class="ml-72 flex-1 p-16 max-w-4xl">
         <div class="animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <h1 class="text-3xl md:text-4xl text-[var(--color-heading)] mb-8 md:mb-12 border-b border-gray-200 pb-4 md:pb-6" style="font-family: var(--font-lora), serif">${section.title}</h1>
-          <div class="space-y-12 md:space-y-16">
+          <h1 class="text-4xl text-[var(--color-heading)] mb-12 border-b border-gray-200 pb-6" style="font-family: var(--font-lora), serif">${section.title}</h1>
+          <div class="space-y-16">
             ${section.metrics.map(metric => renderMetricCard(metric)).join('')}
           </div>
         </div>
@@ -195,23 +228,23 @@ function renderExamples() {
 
   return `
     <div class="relative min-h-screen z-10 flex justify-center">
-      <div class="fixed top-6 md:top-8 right-6 md:right-8 z-50">
+      <div class="fixed top-8 right-8 z-50 flex gap-6 items-center">
         <button data-action="goto-metrics" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Metrics">
-          <i data-lucide="bookmark" class="w-8 h-8 md:w-10 md:h-10 fill-current group-hover:drop-shadow-md"></i>
+          <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
         </button>
       </div>
 
-      <div class="w-full max-w-6xl p-4 sm:p-8 md:p-16">
-        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-8 md:mb-12" style="font-family: var(--font-droid), serif">
+      <div class="w-full max-w-6xl p-8 md:p-16">
+        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-12" style="font-family: var(--font-droid), serif">
           <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
         </button>
 
-        <header class="mb-8 md:mb-12">
-          <h1 class="text-3xl md:text-5xl text-[var(--color-heading)] mb-4 md:mb-6 text-center" style="font-family: var(--font-lora), serif">Empirical Examples</h1>
-          <p class="text-center text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 md:mb-10 px-2" style="font-family: var(--font-content), serif">A cohesive walkthrough of metrics applied across distinct network states.</p>
+        <header class="mb-12">
+          <h1 class="text-5xl text-[var(--color-heading)] mb-6 text-center" style="font-family: var(--font-lora), serif">Empirical Examples</h1>
+          <p class="text-center text-xl text-gray-600 max-w-2xl mx-auto mb-10" style="font-family: var(--font-content), serif">A cohesive walkthrough of the derived connectomic metrics applied across distinct cognitive and physiological network states.</p>
 
-          <div class="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 border-b border-gray-200 pb-4">
-            <div class="flex flex-wrap justify-center gap-2 bg-gray-100 p-1 rounded-lg">
+          <div class="flex justify-center items-center gap-4 border-b border-gray-200 pb-4">
+            <div class="flex gap-2 bg-gray-100 p-1 rounded-lg">
               <button data-action="set-view-mode" data-mode="by-state" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-state' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-700'}" style="font-family: var(--font-droid), serif">View by State</button>
               <button data-action="set-view-mode" data-mode="by-metric" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-metric' ? 'bg-white shadow-sm text-gray-900 font-medium' : 'text-gray-500 hover:text-gray-700'}" style="font-family: var(--font-droid), serif">View by Metric</button>
             </div>
@@ -239,19 +272,19 @@ function renderExamples() {
         ${state.viewMode === 'by-state' ? `
           <div class="space-y-8">
             <section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div class="border-l-4 border-[var(--color-heading)] pl-4 md:pl-8 py-2 mb-8">
-                <h2 class="text-2xl md:text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
-                <p class="text-gray-500 italic text-base md:text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
+              <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2 mb-8">
+                <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
+                <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
               </div>
-              <div class="prose prose-base md:prose-lg max-w-none text-gray-800 leading-loose bg-[#FCFBFF] border border-[#E5E2EC] p-6 md:p-8 rounded-2xl shadow-sm mb-12" style="font-family: var(--font-content), serif">
+              <div class="prose prose-lg max-w-none text-gray-800 leading-loose bg-[#FCFBFF] border border-[#E5E2EC] p-8 rounded-2xl shadow-sm mb-12" style="font-family: var(--font-content), serif">
                 <p>${selectedExample.body}</p>
               </div>
               
-              <h3 class="text-xl md:text-2xl text-[var(--color-heading)] mb-6 md:mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
+              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
               
-              <div class="space-y-8 md:space-y-12">
+              <div class="space-y-12">
                 ${metricsData.map(section => `
-                  <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-[#E5E2EC]">
+                  <div class="bg-white p-8 rounded-2xl shadow-sm border border-[#E5E2EC]">
                     <h4 class="text-xl text-[var(--color-heading)] border-b border-[#E5E2EC] pb-3 mb-6 font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
                     <div class="space-y-6">
                       ${section.metrics.map(m => {
@@ -271,9 +304,9 @@ function renderExamples() {
           </div>
         ` : `
           <div class="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
-             <div class="border-l-4 border-[var(--color-heading)] pl-4 md:pl-8 py-2">
-               <h2 class="text-2xl md:text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
-               <p class="text-gray-500 italic text-base md:text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description}</p>
+             <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
+               <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
+               <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description}</p>
              </div>
              
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
