@@ -4,6 +4,7 @@ import katex from 'katex';
 import { createIcons, icons } from 'lucide';
 import { metricsData, metricStateDifferences } from './data.js';
 import { createConnectomicsBackground } from './ConnectomicsBackground.js';
+import pipelineData from './diagnostic-pipeline.json';
 
 export const mockExamplesList = [
   { id: 'at-rest-0', stateKey: 'atRest', groupId: '1. At Rest', title: 'Placeholder Example 1', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
@@ -24,6 +25,7 @@ let state = {
   selectedMetricId: allMetrics[0].id,
   selectedExampleId: mockExamplesList[0].id,
   showMathMap: {},
+  showPipeline: false,
   carouselIndices: {
     '1. At Rest': 0,
     '2. In-Domain': 0,
@@ -195,6 +197,66 @@ function renderMetricCard(metric) {
   `;
 }
 
+function renderPipelineView() {
+  return `
+    <div class="w-full bg-white border border-gray-200 p-8 md:p-12 mb-12 animate-in fade-in zoom-in-[0.98] slide-in-from-top-6 duration-700 ease-out shadow-sm origin-top">
+      <header class="text-center mb-16">
+        <h3 class="text-4xl text-gray-900 font-light tracking-tight" style="font-family: var(--font-cormorant), serif">
+          ${pipelineData.evaluationTitle} <span class="italic text-gray-400">vs. Ground Truth</span>
+        </h3>
+        <div class="w-12 h-[1px] bg-gray-300 mx-auto mt-8"></div>
+      </header>
+
+      <div class="flex flex-col lg:grid lg:grid-cols-5 gap-8 mb-16 overflow-x-auto pb-4">
+        ${pipelineData.pipelineColumns.map(col => `
+          <div class="flex flex-col items-center min-w-[200px]">
+            <h4 class="text-center uppercase tracking-widest text-[10px] text-[#5F4A8B] font-bold mb-8 h-8 flex items-end" style="font-family: var(--font-fira), monospace">${col.category}</h4>
+            
+            <div class="flex flex-col items-center w-full relative flex-1">
+              ${col.steps.map((step, idx) => `
+                <div class="w-full relative flex flex-col items-center">
+                  <div class="w-full border border-gray-200 bg-white p-5 text-center group hover:bg-gray-50/50 hover:border-gray-300 transition-all duration-500">
+                    <div class="text-xs text-[var(--color-heading)] mb-3 tracking-wide font-medium" style="font-family: var(--font-fira), monospace">${step.metric}</div>
+                    <div class="text-[10px] text-gray-500 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${step.observation}</div>
+                  </div>
+                  ${idx < col.steps.length - 1 ? `
+                    <div class="h-6 w-[1px] bg-gray-200 my-1 relative">
+                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-300 text-[8px] leading-none">↓</div>
+                    </div>
+                  ` : ''}
+                </div>
+              `).join('')}
+              
+              <div class="h-10 w-[1px] bg-gray-200 my-2 relative mt-auto">
+                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-300 text-[8px] leading-none">↓</div>
+              </div>
+            </div>
+
+            <div class="w-full border-t border-gray-200 pt-6 text-center mt-2">
+               <div class="text-[11px] text-gray-500 italic leading-relaxed" style="font-family: var(--font-lora), serif">${col.columnConclusion}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="flex flex-col items-center">
+        <div class="flex w-full max-w-4xl items-center mb-10">
+             <div class="h-[1px] bg-gray-200 flex-1"></div>
+             <div class="px-4 text-gray-300 text-xs">↓</div>
+             <div class="h-[1px] bg-gray-200 flex-1"></div>
+        </div>
+        
+        <div class="w-full max-w-3xl text-center">
+          <h4 class="text-[10px] uppercase tracking-widest text-gray-400 mb-6" style="font-family: var(--font-fira), monospace">Final Unified Synthesis</h4>
+          <p class="text-xl md:text-2xl text-gray-800 leading-relaxed" style="font-family: var(--font-lora), serif">
+            ${pipelineData.finalUnifiedSynthesis}
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function getExampleSelectOptions() {
   const renderOption = (e) => `<option value="${e.id}" ${state.selectedExampleId === e.id ? 'selected' : ''}>${e.title}</option>`;
   return `
@@ -272,10 +334,23 @@ function renderExamples() {
         ${state.viewMode === 'by-state' ? `
           <div class="space-y-8">
             <section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2 mb-8">
-                <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
-                <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
+              <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
+                <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
+                  <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
+                  <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
+                </div>
+                <div class="flex items-center gap-4">
+                  <button data-action="toggle-pipeline" class="border border-gray-300 text-gray-600 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white whitespace-nowrap" style="font-family: var(--font-fira), monospace">
+                    [ ${state.showPipeline ? 'Close' : 'View'} Diagnostic Pipeline ]
+                  </button>
+                  <button data-action="download-pdf" class="border border-gray-300 text-gray-600 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white whitespace-nowrap" style="font-family: var(--font-fira), monospace" onclick="alert('Downloading Full Report PDF for ${selectedExample.title}...')">
+                    [ Download PDF ]
+                  </button>
+                </div>
               </div>
+
+              ${state.showPipeline ? renderPipelineView() : ''}
+
               <div class="prose prose-lg max-w-none text-gray-800 leading-loose bg-[#FCFBFF] border border-[#E5E2EC] p-8 rounded-2xl shadow-sm mb-12" style="font-family: var(--font-content), serif">
                 <p>${selectedExample.body}</p>
               </div>
@@ -397,6 +472,9 @@ document.addEventListener('click', e => {
     renderApp();
   } else if (action === 'set-view-mode') {
     state.viewMode = btn.getAttribute('data-mode');
+    renderApp();
+  } else if (action === 'toggle-pipeline') {
+    state.showPipeline = !state.showPipeline;
     renderApp();
   } else if (action === 'carousel-prev') {
     const title = btn.getAttribute('data-title');
