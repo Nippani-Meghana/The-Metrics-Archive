@@ -407,11 +407,11 @@ function renderStateCarouselCard(title, items) {
         <h2 class="text-[1.35rem] text-[var(--color-heading)] font-semibold leading-snug" style="font-family: var(--font-lora), serif">${title}</h2>
       </div>
 
-      <div class="p-8 flex-grow overflow-hidden relative">
-        <div class="animate-in fade-in duration-500 h-full flex flex-col">
-          ${currentItem.subtitle ? `<div class="text-[10px] uppercase tracking-widest text-[#8271A3] mb-1 font-sans font-bold">${currentItem.subtitle}</div>` : ''}
-          <h3 class="text-[1.1rem] font-medium text-gray-900 mb-4" style="font-family: var(--font-lora), serif">${currentItem.title}</h3>
-          <p class="text-gray-600 leading-relaxed text-[14px]" style="font-family: var(--font-fira), monospace">${currentItem.body}</p>
+      <div class="p-8 flex-grow overflow-y-auto relative hide-scrollbar">
+        <div class="animate-in fade-in duration-500 flex flex-col min-h-full">
+          ${currentItem.subtitle ? `<div class="text-[10px] uppercase tracking-widest text-[#8271A3] mb-1 font-sans font-bold flex-shrink-0">${currentItem.subtitle}</div>` : ''}
+          <h3 class="text-[1.1rem] font-medium text-gray-900 mb-4 flex-shrink-0" style="font-family: var(--font-lora), serif">${currentItem.title}</h3>
+          <p class="text-gray-600 leading-relaxed text-[14px] pb-4" style="font-family: var(--font-fira), monospace">${currentItem.body}</p>
         </div>
       </div>
 
