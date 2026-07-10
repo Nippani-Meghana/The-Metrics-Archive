@@ -48,7 +48,7 @@
       "columnConclusion": "Tristique senectus et netus et malesuada fames. Ornare quam viverra orci sagittis eu volutpat odio."
     },
     {
-      "category": "Oscillation/Input-Output",
+      "category": "Oscillation",
       "steps": [
         { "metric": "PLV", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
         { "metric": "Hilbert Spectrum", "observation": "Posuere sollicitudin aliquam ultrices sagittis." },

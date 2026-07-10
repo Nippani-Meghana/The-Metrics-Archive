@@ -303,7 +303,7 @@ function renderExamples() {
 
         <header class="mb-12">
           <h1 class="text-5xl text-[var(--color-heading)] mb-6 text-center" style="font-family: var(--font-lora), serif">Empirical Examples</h1>
-          <p class="text-center text-xl text-gray-600 max-w-2xl mx-auto mb-10" style="font-family: var(--font-content), serif">A cohesive walkthrough of the derived connectomic metrics applied across distinct cognitive and physiological network states.</p>
+          <p class="text-center text-xl text-gray-600 max-w-2xl mx-auto mb-10" style="font-family: var(--font-content), serif">A walkthrough of the metrics applied across distinct network states.</p>
 
           <div class="flex justify-center items-center gap-4 border-b border-gray-200 pb-4">
             <div class="flex gap-2 bg-gray-100 p-1 rounded-lg">
