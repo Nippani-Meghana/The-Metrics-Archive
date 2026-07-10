@@ -207,33 +207,33 @@ function renderPipelineView() {
         <div class="w-12 h-[1px] bg-gray-300 mx-auto mt-8"></div>
       </header>
 
-      <div class="flex flex-col lg:grid lg:grid-cols-5 gap-8 mb-16 overflow-x-auto pb-4">
+      <div class="flex flex-col lg:grid lg:grid-cols-5 gap-4 lg:gap-6 mb-16 overflow-x-auto lg:overflow-x-visible pb-4">
         ${pipelineData.pipelineColumns.map(col => `
-          <div class="flex flex-col items-center min-w-[200px]">
-            <h4 class="text-center uppercase tracking-widest text-[10px] text-[#5F4A8B] font-bold mb-8 h-8 flex items-end" style="font-family: var(--font-fira), monospace">${col.category}</h4>
+          <div class="flex flex-col items-center min-w-[160px]">
+            <h4 class="text-center uppercase tracking-widest text-xs text-black font-bold mb-6 h-10 flex items-end justify-center" style="font-family: var(--font-fira), monospace">${col.category}</h4>
             
             <div class="flex flex-col items-center w-full relative flex-1">
               ${col.steps.map((step, idx) => `
                 <div class="w-full relative flex flex-col items-center">
-                  <div class="w-full border border-gray-200 bg-white p-5 text-center group hover:bg-gray-50/50 hover:border-gray-300 transition-all duration-500">
-                    <div class="text-xs text-[var(--color-heading)] mb-3 tracking-wide font-medium" style="font-family: var(--font-fira), monospace">${step.metric}</div>
-                    <div class="text-[10px] text-gray-500 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${step.observation}</div>
+                  <div class="w-full border border-gray-300 bg-white p-4 text-center group hover:bg-gray-50 hover:border-gray-400 transition-all duration-300">
+                    <div class="text-xs text-black mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
+                    <div class="text-[11px] text-gray-900 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${step.observation}</div>
                   </div>
                   ${idx < col.steps.length - 1 ? `
-                    <div class="h-6 w-[1px] bg-gray-200 my-1 relative">
-                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-300 text-[8px] leading-none">↓</div>
+                    <div class="h-6 w-[1px] bg-gray-300 my-1 relative">
+                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-400 text-[10px] leading-none">↓</div>
                     </div>
                   ` : ''}
                 </div>
               `).join('')}
               
-              <div class="h-10 w-[1px] bg-gray-200 my-2 relative mt-auto">
-                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-300 text-[8px] leading-none">↓</div>
+              <div class="h-10 w-[1px] bg-gray-300 my-2 relative mt-auto">
+                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-gray-400 text-[10px] leading-none">↓</div>
               </div>
             </div>
 
-            <div class="w-full border-t border-gray-200 pt-6 text-center mt-2">
-               <div class="text-[11px] text-gray-500 italic leading-relaxed" style="font-family: var(--font-lora), serif">${col.columnConclusion}</div>
+            <div class="w-full border-t border-gray-300 pt-6 text-center mt-2 flex-grow-0">
+               <div class="text-[13px] text-black italic leading-relaxed" style="font-family: var(--font-lora), serif">${col.columnConclusion}</div>
             </div>
           </div>
         `).join('')}
@@ -241,14 +241,14 @@ function renderPipelineView() {
 
       <div class="flex flex-col items-center">
         <div class="flex w-full max-w-4xl items-center mb-10">
-             <div class="h-[1px] bg-gray-200 flex-1"></div>
-             <div class="px-4 text-gray-300 text-xs">↓</div>
-             <div class="h-[1px] bg-gray-200 flex-1"></div>
+             <div class="h-[1px] bg-gray-300 flex-1"></div>
+             <div class="px-4 text-gray-400 text-xs">↓</div>
+             <div class="h-[1px] bg-gray-300 flex-1"></div>
         </div>
         
         <div class="w-full max-w-3xl text-center">
-          <h4 class="text-[10px] uppercase tracking-widest text-gray-400 mb-6" style="font-family: var(--font-fira), monospace">Final Unified Synthesis</h4>
-          <p class="text-xl md:text-2xl text-gray-800 leading-relaxed" style="font-family: var(--font-lora), serif">
+          <h4 class="text-xs uppercase tracking-widest text-black font-bold mb-6" style="font-family: var(--font-fira), monospace">Final Unified Synthesis</h4>
+          <p class="text-xl md:text-2xl text-black leading-relaxed" style="font-family: var(--font-lora), serif">
             ${pipelineData.finalUnifiedSynthesis}
           </p>
         </div>
