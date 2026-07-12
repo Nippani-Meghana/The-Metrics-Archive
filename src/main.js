@@ -5,16 +5,7 @@ import { createIcons, icons } from 'lucide';
 import { metricsData, metricStateDifferences } from './data.js';
 import { createConnectomicsBackground } from './ConnectomicsBackground.js';
 import pipelineData from './diagnostic-pipeline.json';
-
-export const mockExamplesList = [
-  { id: 'at-rest-0', stateKey: 'atRest', groupId: '1. At Rest', title: 'Placeholder Example 1', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' },
-  { id: 'in-domain-0', stateKey: 'inDomain', groupId: '2. In-Domain', title: 'Placeholder Example 1', body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt.' },
-  { id: 'in-domain-1', stateKey: 'inDomain', groupId: '2. In-Domain', title: 'Placeholder Example 2', body: 'Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.' },
-  { id: 'out-of-domain-0', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 1', body: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet.' },
-  { id: 'out-of-domain-1', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 2', body: 'Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper.' },
-  { id: 'out-of-domain-2', stateKey: 'outOfDomain', groupId: '3. Out-of-Domain', title: 'Placeholder Example 3', body: 'Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui.' },
-  { id: 'black-box-model-0', stateKey: 'blackBoxModel', groupId: '4. Black Box Model', title: 'Placeholder Example 1', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.' }
-];
+import { mockExamplesList } from './examples.js';
 
 const allMetrics = metricsData.flatMap(section => section.metrics);
 
@@ -197,46 +188,101 @@ function renderMetricCard(metric) {
   `;
 }
 
-function renderPipelineView() {
+function renderPipelineView(selectedExample) {
+  // If the selected example has specific pipeline data provided, use it.
+  // Otherwise, fallback to the placeholder lorem ipsum generation.
+  const customPipeline = selectedExample?.pipeline;
+  const shiftAmount = selectedExample ? selectedExample.title.length + selectedExample.id.length : 0;
+  
+  const loremIpsums = [
+     "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+     "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+     "Nisi ut aliquip ex ea commodo consequat.",
+     "Duis aute irure dolor in reprehenderit in voluptate velit esse.",
+     "Cillum dolore eu fugiat nulla pariatur.",
+     "Excepteur sint occaecat cupidatat non proident.",
+     "Sunt in culpa qui officia deserunt mollit anim id est laborum."
+  ];
+
+  const conclusions = [
+     "Phasellus egestas tellus rutrum tellus pellentesque eu tincidunt. Sagittis purus sit amet volutpat consequat mauris nunc congue.",
+     "Nisl condimentum id venenatis a. In nisl nisi scelerisque eu ultrices vitae auctor eu.",
+     "Morbi non arcu risus quis varius quam quisque id diam. Faucibus purus in massa tempor nec feugiat nisl pretium.",
+     "Tristique senectus et netus et malesuada fames. Ornare quam viverra orci sagittis eu volutpat odio.",
+     "Cursus metus aliquam eleifend mi in nulla. Turpis egestas sed tempus urna et pharetra pharetra massa massa."
+  ];
+
+  const finalSyntheses = [
+     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+     "Ac feugiat amet consectetur adipiscing elit pellentesque habitant morbi. Tincidunt eget nullam non nisi est sit amet facilisis magna. Aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi. Vitae congue eu consequat ac felis donec et odio.",
+     "Velit scelerisque in dictum non consectetur a. Purus gravida quis blandit turpis cursus. Diam phasellus vestibulum lorem sed risus ultricies tristique nulla. Adipiscing commodo elit at imperdiet dui accumsan sit."
+  ];
+
+  const getObservation = (cIdx, sIdx) => {
+    if (customPipeline && customPipeline.columns && customPipeline.columns[cIdx] && customPipeline.columns[cIdx].steps[sIdx]) {
+      return customPipeline.columns[cIdx].steps[sIdx].observation;
+    }
+    return loremIpsums[(cIdx * 3 + sIdx + shiftAmount) % loremIpsums.length];
+  };
+
+  const getConclusion = (cIdx) => {
+    if (customPipeline && customPipeline.columns && customPipeline.columns[cIdx]) {
+      return customPipeline.columns[cIdx].conclusion;
+    }
+    return conclusions[(cIdx + shiftAmount) % conclusions.length];
+  };
+
+  const getSynthesis = () => {
+    if (customPipeline && customPipeline.finalSynthesis) {
+      return customPipeline.finalSynthesis;
+    }
+    return finalSyntheses[shiftAmount % finalSyntheses.length];
+  };
+
+  const evalTitle = selectedExample ? selectedExample.title : pipelineData.evaluationTitle;
+
   return `
     <div class="w-full bg-white border border-gray-200 p-8 md:p-12 mb-12 animate-in fade-in zoom-in-[0.98] slide-in-from-top-6 duration-700 ease-out shadow-sm origin-top">
       <header class="text-center mb-16">
         <h3 class="text-4xl text-gray-900 font-light tracking-tight" style="font-family: var(--font-cormorant), serif">
-          ${pipelineData.evaluationTitle} <span class="italic text-gray-400">vs. Ground Truth</span>
+          ${evalTitle} <span class="italic text-gray-400">vs. Ground Truth</span>
         </h3>
         <div class="w-12 h-[1px] bg-gray-300 mx-auto mt-8"></div>
       </header>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8 mb-16 pb-8">
-        ${pipelineData.pipelineColumns.map(col => `
-          <div class="flex flex-col items-center w-full">
-            <h4 class="text-center uppercase tracking-widest text-sm text-black font-bold mb-6 h-10 flex items-end justify-center" style="font-family: var(--font-fira), monospace">${col.category}</h4>
-            
-            <div class="flex flex-col items-center w-full relative flex-1">
-              ${col.steps.map((step, idx) => `
-                <div class="w-full relative flex flex-col items-center">
-                  <div class="w-full border-2 border-gray-300 bg-white p-5 text-center group hover:bg-gray-50 hover:border-black transition-all duration-300 shadow-sm">
-                    <div class="text-sm text-black mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
-                    <div class="text-xs text-black leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${step.observation}</div>
-                  </div>
-                  ${idx < col.steps.length - 1 ? `
-                    <div class="h-8 w-0.5 bg-gray-400 my-1 relative">
-                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
-                    </div>
-                  ` : ''}
-                </div>
-              `).join('')}
+      <div class="w-full overflow-x-auto pb-8 mb-16">
+        <div class="grid grid-cols-5 gap-6 md:gap-8 min-w-[1000px]">
+          ${pipelineData.pipelineColumns.map((col, cIdx) => `
+            <div class="flex flex-col items-center w-full h-full">
+              <h4 class="text-center uppercase tracking-widest text-sm text-black font-bold mb-6 h-10 flex items-end justify-center shrink-0" style="font-family: var(--font-fira), monospace">${col.category}</h4>
               
-              <div class="h-12 w-0.5 bg-gray-400 my-2 relative mt-auto">
-                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
+              <div class="flex flex-col items-center w-full relative flex-1">
+                ${col.steps.map((step, idx) => `
+                  <div class="w-full relative flex flex-col items-center">
+                    <div class="w-full border-2 border-gray-300 bg-white p-5 text-center group hover:bg-gray-50 hover:border-black transition-all duration-300 shadow-sm">
+                      <div class="text-sm text-black mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
+                      <div class="text-xs text-black leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${getObservation(cIdx, idx)}</div>
+                    </div>
+                    ${idx < col.steps.length - 1 ? `
+                      <div class="h-8 w-0.5 bg-gray-400 my-1 relative">
+                         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
+                      </div>
+                    ` : ''}
+                  </div>
+                `).join('')}
+                
+                <div class="h-12 w-0.5 bg-gray-400 my-2 relative mt-auto">
+                   <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
+                </div>
+              </div>
+
+              <div class="w-full border-t-2 border-gray-300 pt-6 text-center mt-2 flex-grow-0 shrink-0">
+                 <div class="text-sm text-black italic leading-relaxed" style="font-family: var(--font-lora), serif">${getConclusion(cIdx)}</div>
               </div>
             </div>
-
-            <div class="w-full border-t-2 border-gray-300 pt-6 text-center mt-2 flex-grow-0">
-               <div class="text-sm text-black italic leading-relaxed" style="font-family: var(--font-lora), serif">${col.columnConclusion}</div>
-            </div>
-          </div>
-        `).join('')}
+          `).join('')}
+        </div>
       </div>
 
       <div class="flex flex-col items-center">
@@ -249,7 +295,7 @@ function renderPipelineView() {
         <div class="w-full max-w-3xl text-center">
           <h4 class="text-sm uppercase tracking-widest text-black font-bold mb-6" style="font-family: var(--font-fira), monospace">Final Unified Synthesis</h4>
           <p class="text-xl md:text-2xl text-black leading-relaxed" style="font-family: var(--font-lora), serif">
-            ${pipelineData.finalUnifiedSynthesis}
+            ${getSynthesis()}
           </p>
         </div>
       </div>
@@ -349,7 +395,7 @@ function renderExamples() {
                 </div>
               </div>
 
-              ${state.showPipeline ? renderPipelineView() : ''}
+              ${state.showPipeline ? renderPipelineView(selectedExample) : ''}
 
               <div class="prose prose-lg max-w-none text-gray-800 leading-loose bg-[#FCFBFF] border border-[#E5E2EC] p-8 rounded-2xl shadow-sm mb-12" style="font-family: var(--font-content), serif">
                 <p>${selectedExample.body}</p>
