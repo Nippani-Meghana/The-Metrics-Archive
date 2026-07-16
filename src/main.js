@@ -252,34 +252,41 @@ function renderPipelineView(selectedExample) {
       </header>
 
       <div class="w-full overflow-x-auto pb-8 mb-16">
-        <div class="grid grid-cols-5 gap-6 md:gap-8 min-w-[1000px]">
+        <div class="grid grid-cols-5 gap-x-6 md:gap-x-8 min-w-[1000px]">
+          <!-- Headers Row -->
+          ${pipelineData.pipelineColumns.map(col => `
+            <div class="flex flex-col justify-end mb-6">
+              <h4 class="text-center uppercase tracking-widest text-sm text-black font-bold flex items-end justify-center" style="font-family: var(--font-fira), monospace">${col.category}</h4>
+            </div>
+          `).join('')}
+          
+          <!-- Steps Row -->
           ${pipelineData.pipelineColumns.map((col, cIdx) => `
-            <div class="flex flex-col items-center w-full h-full">
-              <h4 class="text-center uppercase tracking-widest text-sm text-black font-bold mb-6 h-10 flex items-end justify-center shrink-0" style="font-family: var(--font-fira), monospace">${col.category}</h4>
-              
-              <div class="flex flex-col items-center w-full relative flex-1">
-                ${col.steps.map((step, idx) => `
-                  <div class="w-full relative flex flex-col items-center">
-                    <div class="w-full border-2 border-gray-300 bg-white p-5 text-center group hover:bg-gray-50 hover:border-black transition-all duration-300 shadow-sm">
-                      <div class="text-sm text-black mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
-                      <div class="text-xs text-black leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${getObservation(cIdx, idx)}</div>
-                    </div>
-                    ${idx < col.steps.length - 1 ? `
-                      <div class="h-8 w-0.5 bg-gray-400 my-1 relative">
-                         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
-                      </div>
-                    ` : ''}
+            <div class="flex flex-col items-center w-full relative flex-1">
+              ${col.steps.map((step, idx) => `
+                <div class="w-full relative flex flex-col items-center">
+                  <div class="w-full border-2 border-gray-300 bg-white p-5 text-center group hover:bg-gray-50 hover:border-black transition-all duration-300 shadow-sm">
+                    <div class="text-sm text-black mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
+                    <div class="text-xs text-black leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${getObservation(cIdx, idx)}</div>
                   </div>
-                `).join('')}
-                
-                <div class="h-12 w-0.5 bg-gray-400 my-2 relative mt-auto">
-                   <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
+                  ${idx < col.steps.length - 1 ? `
+                    <div class="h-8 w-0.5 bg-gray-400 my-1 relative">
+                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
+                    </div>
+                  ` : ''}
                 </div>
+              `).join('')}
+              
+              <div class="w-0.5 bg-gray-400 my-2 relative flex-1 min-h-[3rem]">
+                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black text-xs font-bold leading-none">↓</div>
               </div>
+            </div>
+          `).join('')}
 
-              <div class="w-full border-t-2 border-gray-300 pt-6 text-center mt-2 flex-grow-0 shrink-0">
-                 <div class="text-sm text-black italic leading-relaxed" style="font-family: var(--font-lora), serif">${getConclusion(cIdx)}</div>
-              </div>
+          <!-- Conclusions Row -->
+          ${pipelineData.pipelineColumns.map((col, cIdx) => `
+            <div class="w-full border-t-2 border-gray-300 pt-6 text-center mt-2">
+               <div class="text-sm text-black italic leading-relaxed" style="font-family: var(--font-lora), serif">${getConclusion(cIdx)}</div>
             </div>
           `).join('')}
         </div>
