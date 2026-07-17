@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Lora:ital,wght@0,700;1,700&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Tangerine:wght@700&family=Oswald:wght@300;400&family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Fira+Code:wght@400&display=swap');
 
-@theme {
+:root {
   --font-lora: "Lora", serif;
   --font-content: "Times New Roman", Times, serif;
   --font-droid: "Noto Serif", serif;
@@ -11,14 +13,34 @@
   --font-garamond: "EB Garamond", serif;
   --font-fira: "Fira Code", monospace;
   --font-cormorant: "Cormorant Garamond", serif;
+  
   --color-heading: #5F4A8B;
+  --color-bg: #FFFFFF;
+}
+
+.dark {
+  --color-heading: #C4B5FD; /* High-contrast violet for dark mode */
+  --color-bg: #0f172a; /* Slate 900 */
+}
+
+@theme {
+  --font-lora: var(--font-lora);
+  --font-content: var(--font-content);
+  --font-droid: var(--font-droid);
+  --font-symphony: var(--font-symphony);
+  --font-perandory: var(--font-perandory);
+  --font-garamond: var(--font-garamond);
+  --font-fira: var(--font-fira);
+  --font-cormorant: var(--font-cormorant);
+  --color-heading: var(--color-heading);
 }
 
 body {
-  background-color: #FFFFFF;
+  background-color: var(--color-bg);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  transition: background-color 0.3s ease;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
