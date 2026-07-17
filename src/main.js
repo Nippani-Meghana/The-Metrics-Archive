@@ -13,10 +13,13 @@ let state = {
   currentView: 'entry',
   activeSectionId: metricsData[0].id,
   viewMode: 'by-state',
+  selectedSystem: mockExamplesList[0].system,
   selectedMetricId: allMetrics[0].id,
   selectedExampleId: mockExamplesList[0].id,
   showMathMap: {},
   showPipeline: false,
+  isExampleDropdownOpen: false,
+  isMetricDropdownOpen: false,
   carouselIndices: {
     '1. At Rest': 0,
     '2. In-Domain': 0,
@@ -311,35 +314,49 @@ function renderPipelineView(selectedExample) {
 }
 
 function getExampleSelectOptions() {
-  const renderOption = (e) => `<option value="${e.id}" ${state.selectedExampleId === e.id ? 'selected' : ''}>${e.title}</option>`;
-  return `
-    <optgroup label="1. At Rest">
-      ${mockExamplesList.filter(e => e.groupId === '1. At Rest').map(renderOption).join('')}
-    </optgroup>
-    <optgroup label="2. In-Domain">
-      ${mockExamplesList.filter(e => e.groupId === '2. In-Domain').map(renderOption).join('')}
-    </optgroup>
-    <optgroup label="3. Out-of-Domain">
-      ${mockExamplesList.filter(e => e.groupId === '3. Out-of-Domain').map(renderOption).join('')}
-    </optgroup>
-    <optgroup label="4. Black Box Model">
-      ${mockExamplesList.filter(e => e.groupId === '4. Black Box Model').map(renderOption).join('')}
-    </optgroup>
-  `;
+  const filteredExamples = mockExamplesList.filter(e => e.system === state.selectedSystem);
+  const renderOption = (e) => `<button data-action="change-example" data-value="${e.id}" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors text-sm ${state.selectedExampleId === e.id ? 'bg-gray-50 text-[var(--color-heading)] font-medium' : 'text-gray-700'}">${e.title}</button>`;
+  
+  const groups = [
+    { label: '1. At Rest', key: '1. At Rest' },
+    { label: '2. In-Domain', key: '2. In-Domain' },
+    { label: '3. Out-of-Domain', key: '3. Out-of-Domain' },
+    { label: '4. Black Box Model', key: '4. Black Box Model' }
+  ];
+
+  return groups.map(group => {
+    const items = filteredExamples.filter(e => e.groupId === group.key);
+    if (items.length === 0) return '';
+    return `
+      <div class="py-1">
+        <div class="px-4 py-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50/80">${group.label}</div>
+        ${items.map(renderOption).join('')}
+      </div>
+    `;
+  }).join('');
 }
 
 function getMetricSelectOptions() {
   return metricsData.map(section => `
-    <optgroup label="${section.title}">
-      ${section.metrics.map(metric => `<option value="${metric.id}" ${state.selectedMetricId === metric.id ? 'selected' : ''}>${metric.name}</option>`).join('')}
-    </optgroup>
+    <div class="py-1">
+      <div class="px-4 py-1.5 text-xs font-bold text-gray-500 uppercase tracking-wider bg-gray-50/80">${section.title}</div>
+      ${section.metrics.map(metric => `<button data-action="change-metric" data-value="${metric.id}" class="w-full text-left px-4 py-2 hover:bg-gray-100 transition-colors text-sm ${state.selectedMetricId === metric.id ? 'bg-gray-50 text-[var(--color-heading)] font-medium' : 'text-gray-700'}">${metric.name}</button>`).join('')}
+    </div>
   `).join('');
 }
 
 function renderExamples() {
   const selectedMetric = allMetrics.find(m => m.id === state.selectedMetricId);
   const differences = metricStateDifferences[state.selectedMetricId] || { atRest: "Data not available.", inDomain: "Data not available.", outOfDomain: "Data not available.", blackBoxModel: "Data not available." };
-  const selectedExample = mockExamplesList.find(e => e.id === state.selectedExampleId) || mockExamplesList[0];
+  
+  // Ensure selectedExampleId is valid for the selected system
+  let selectedExample = mockExamplesList.find(e => e.id === state.selectedExampleId && e.system === state.selectedSystem);
+  if (!selectedExample) {
+    selectedExample = mockExamplesList.find(e => e.system === state.selectedSystem) || mockExamplesList[0];
+    state.selectedExampleId = selectedExample.id;
+  }
+
+  const systems = [...new Set(mockExamplesList.map(e => e.system))];
 
   return `
     <div class="relative min-h-screen z-10 flex justify-center">
@@ -350,13 +367,24 @@ function renderExamples() {
       </div>
 
       <div class="w-full max-w-[1400px] p-8 md:p-12 lg:p-16">
-        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-12" style="font-family: var(--font-droid), serif">
+        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-8" style="font-family: var(--font-droid), serif">
           <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
         </button>
 
         <header class="mb-12">
           <h1 class="text-5xl text-[var(--color-heading)] mb-6 text-center" style="font-family: var(--font-lora), serif">Empirical Examples</h1>
           <p class="text-center text-xl text-gray-600 max-w-2xl mx-auto mb-10" style="font-family: var(--font-content), serif">A walkthrough of the metrics applied across distinct network states.</p>
+          
+          <!-- Tier 1: Global System Toggle -->
+          <div class="flex justify-center mb-8">
+            <div class="inline-flex bg-gray-100/80 p-1.5 rounded-xl gap-1">
+              ${systems.map(system => `
+                <button data-action="set-system" data-system="${system}" class="px-6 py-2.5 rounded-lg text-sm transition-all duration-300 ${state.selectedSystem === system ? 'bg-white shadow-sm text-[var(--color-heading)] font-semibold' : 'text-gray-500 hover:text-gray-900 font-medium'}" style="font-family: var(--font-droid), serif">
+                  ${system}
+                </button>
+              `).join('')}
+            </div>
+          </div>
 
           <div class="flex justify-center items-center gap-4 border-b border-gray-200 pb-4">
             <div class="flex gap-2 bg-gray-100 p-1 rounded-lg">
@@ -365,32 +393,42 @@ function renderExamples() {
             </div>
 
             ${state.viewMode === 'by-state' ? `
-              <div class="relative">
-                <select data-action="change-example" class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:border-[var(--color-heading)] focus:ring-1 focus:ring-[var(--color-heading)] text-sm" style="font-family: var(--font-droid), serif">
-                  ${getExampleSelectOptions()}
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+              <div class="relative dropdown-container">
+                <button data-action="toggle-example-dropdown" class="flex justify-between items-center w-72 bg-white border border-gray-200 text-gray-700 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all" style="font-family: var(--font-droid), serif">
+                  <span class="truncate">${selectedExample.title}</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 shrink-0 ml-2"></i>
+                </button>
+                ${state.isExampleDropdownOpen ? `
+                  <div class="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto" style="font-family: var(--font-droid), serif">
+                    ${getExampleSelectOptions()}
+                  </div>
+                ` : ''}
               </div>
             ` : ''}
 
             ${state.viewMode === 'by-metric' ? `
-              <div class="relative">
-                <select data-action="change-metric" class="appearance-none bg-white border border-gray-200 text-gray-700 py-2 pl-4 pr-10 rounded-lg focus:outline-none focus:border-[var(--color-heading)] focus:ring-1 focus:ring-[var(--color-heading)] text-sm" style="font-family: var(--font-droid), serif">
-                  ${getMetricSelectOptions()}
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>
+              <div class="relative dropdown-container">
+                <button data-action="toggle-metric-dropdown" class="flex justify-between items-center w-72 bg-white border border-gray-200 text-gray-700 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all" style="font-family: var(--font-droid), serif">
+                  <span class="truncate">${selectedMetric ? selectedMetric.name : 'Select Metric'}</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 shrink-0 ml-2"></i>
+                </button>
+                ${state.isMetricDropdownOpen ? `
+                  <div class="absolute top-full left-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto" style="font-family: var(--font-droid), serif">
+                    ${getMetricSelectOptions()}
+                  </div>
+                ` : ''}
               </div>
             ` : ''}
           </div>
         </header>
 
         ${state.viewMode === 'by-state' ? `
-          <div class="space-y-8">
-            <section class="animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div class="space-y-8 animate-in fade-in zoom-in-[0.99] duration-500">
+            <section>
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
                 <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
                   <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
-                  <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId}</p>
+                  <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId} &mdash; ${state.selectedSystem}</p>
                 </div>
                 <div class="flex items-center gap-4">
                   <button data-action="toggle-pipeline" class="border border-gray-300 text-gray-600 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white whitespace-nowrap" style="font-family: var(--font-fira), monospace">
@@ -434,14 +472,14 @@ function renderExamples() {
           <div class="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
              <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
                <h2 class="text-3xl text-gray-900 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
-               <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description}</p>
+               <p class="text-gray-500 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description} (${state.selectedSystem})</p>
              </div>
              
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
-                ${renderStateCarouselCard('1. At Rest', [{ title: "Observation", body: differences.atRest || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'atRest')])}
-                ${renderStateCarouselCard('2. In-Domain', [{ title: "Observation", body: differences.inDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'inDomain')])}
-                ${renderStateCarouselCard('3. Out-of-Domain', [{ title: "Observation", body: differences.outOfDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'outOfDomain')])}
-                ${renderStateCarouselCard('4. Black Box Model', [{ title: "Observation", body: differences.blackBoxModel || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'blackBoxModel')])}
+                ${renderStateCarouselCard('1. At Rest', [{ title: "Observation", body: differences.atRest || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'atRest' && e.system === state.selectedSystem)])}
+                ${renderStateCarouselCard('2. In-Domain', [{ title: "Observation", body: differences.inDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'inDomain' && e.system === state.selectedSystem)])}
+                ${renderStateCarouselCard('3. Out-of-Domain', [{ title: "Observation", body: differences.outOfDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'outOfDomain' && e.system === state.selectedSystem)])}
+                ${renderStateCarouselCard('4. Black Box Model', [{ title: "Observation", body: differences.blackBoxModel || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'blackBoxModel' && e.system === state.selectedSystem)])}
              </div>
           </div>
         `}
@@ -486,6 +524,15 @@ function renderStateCarouselCard(title, items) {
 }
 
 document.addEventListener('click', e => {
+  // Handle clicking outside of dropdowns
+  if (!e.target.closest('.dropdown-container')) {
+    if (state.isExampleDropdownOpen || state.isMetricDropdownOpen) {
+      state.isExampleDropdownOpen = false;
+      state.isMetricDropdownOpen = false;
+      renderApp();
+    }
+  }
+
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
   const action = btn.getAttribute('data-action');
@@ -541,15 +588,38 @@ document.addEventListener('click', e => {
     const curr = state.carouselIndices[title] || 0;
     state.carouselIndices[title] = (curr + 1) % len;
     renderApp();
-  }
-});
-
-document.addEventListener('change', e => {
-  if (e.target.matches('[data-action="change-example"]')) {
-    state.selectedExampleId = e.target.value;
+  } else if (action === 'set-system') {
+    state.selectedSystem = btn.getAttribute('data-system');
+    // Reset carousel indices when system changes
+    state.carouselIndices = {
+      '1. At Rest': 0,
+      '2. In-Domain': 0,
+      '3. Out-of-Domain': 0,
+      '4. Black Box Model': 0
+    };
     renderApp();
-  } else if (e.target.matches('[data-action="change-metric"]')) {
-    state.selectedMetricId = e.target.value;
+  } else if (action === 'toggle-example-dropdown') {
+    state.isExampleDropdownOpen = !state.isExampleDropdownOpen;
+    state.isMetricDropdownOpen = false;
+    renderApp();
+  } else if (action === 'toggle-metric-dropdown') {
+    state.isMetricDropdownOpen = !state.isMetricDropdownOpen;
+    state.isExampleDropdownOpen = false;
+    renderApp();
+  } else if (action === 'change-example') {
+    state.selectedExampleId = btn.getAttribute('data-value');
+    state.showPipeline = false;
+    state.isExampleDropdownOpen = false;
+    renderApp();
+  } else if (action === 'change-metric') {
+    state.selectedMetricId = btn.getAttribute('data-value');
+    state.isMetricDropdownOpen = false;
+    state.carouselIndices = {
+      '1. At Rest': 0,
+      '2. In-Domain': 0,
+      '3. Out-of-Domain': 0,
+      '4. Black Box Model': 0
+    };
     renderApp();
   }
 });
