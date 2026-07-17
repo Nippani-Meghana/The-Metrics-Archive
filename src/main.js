@@ -450,9 +450,6 @@ function renderExamples() {
                   <button data-action="toggle-pipeline" class="border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white dark:hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white dark:bg-slate-900 whitespace-nowrap" style="font-family: var(--font-fira), monospace">
                     [ ${state.showPipeline ? 'Close' : 'View'} Diagnostic Pipeline ]
                   </button>
-                  <button data-action="download-pdf" class="border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white dark:hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white dark:bg-slate-900 whitespace-nowrap" style="font-family: var(--font-fira), monospace" onclick="alert('Downloading Full Report PDF for ${selectedExample.title}...')">
-                    [ Download PDF ]
-                  </button>
                 </div>
               </div>
 
