@@ -2,21 +2,36 @@ const defaultPaper = [{ title: "[Placeholder] Foundational Literature & Review o
 
 export const metricsData = [
   {
-    id: "spike-train",
-    title: "1. Spike Train",
+    id: "behavioral-metrics",
+    title: "1. Behavioral Metrics",
     metrics: [
       {
-        id: "st-behavioral",
-        name: "Behavioral",
-        description: "Relates spike train timings and firing characteristics to specific behavioral epochs or events.",
-        mathematics: "R_{behavior}(t) = \\int \\lambda(t) b(t) dt",
-        papers: [
-          {
-            title: "Truccolo et al., 2005 - A point process framework for relating neural spiking activity to spikes, predecessors, and extrinsic covariates",
-            url: "https://doi.org/10.1152/jn.00697.2004"
-          }
-        ]
+        id: "bm-accuracy",
+        name: "Accuracy",
+        description: "Measures the overall correctness of the model's predictions or classifications across all instances.",
+        mathematics: "\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}",
+        papers: []
       },
+      {
+        id: "bm-specificity",
+        name: "Specificity",
+        description: "Measures the proportion of actual negatives that are correctly identified as such (true negative rate).",
+        mathematics: "\\text{Specificity} = \\frac{TN}{TN + FP}",
+        papers: []
+      },
+      {
+        id: "bm-sensitivity",
+        name: "Sensitivity",
+        description: "Measures the proportion of actual positives that are correctly identified as such (true positive rate, or recall).",
+        mathematics: "\\text{Sensitivity} = \\frac{TP}{TP + FN}",
+        papers: []
+      }
+    ]
+  },
+  {
+    id: "spike-train",
+    title: "2. Spike Train",
+    metrics: [
       {
         id: "st-isi",
         name: "Inter-Spike Interval (ISI)",
@@ -105,7 +120,7 @@ export const metricsData = [
   },
   {
     id: "membrane-potential",
-    title: "2. Membrane Potential",
+    title: "3. Membrane Potential",
     metrics: [
       {
         id: "mp-vm-mismatch",
@@ -171,7 +186,7 @@ export const metricsData = [
   },
   {
     id: "information-theory",
-    title: "3. Information Theory",
+    title: "4. Information Theory",
     metrics: [
       {
         id: "it-entropy",
@@ -237,7 +252,7 @@ export const metricsData = [
   },
   {
     id: "neural-manifolds",
-    title: "4. Neural Manifolds",
+    title: "5. Neural Manifolds",
     metrics: [
       {
         id: "dimensionality",
@@ -280,7 +295,7 @@ export const metricsData = [
   },
   {
     id: "oscillation-based",
-    title: "5. Oscillation Based",
+    title: "6. Oscillation Based",
     metrics: [
       {
         id: "phase-locking-value",
@@ -375,11 +390,6 @@ const defaultStateDiff = {
 };
 
 export const metricStateDifferences = {
-  "st-behavioral": {
-    atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-  },
   "st-isi": {
     atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",

@@ -2,9 +2,17 @@
   "evaluationTitle": "Submitted Model 1",
   "pipelineColumns": [
     {
+      "category": "Behavioral Metrics",
+      "steps": [
+        { "metric": "Accuracy", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
+        { "metric": "Specificity", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+        { "metric": "Sensitivity", "observation": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." }
+      ],
+      "columnConclusion": "Quisque egestas diam in arcu cursus euismod quis viverra. Ac orci phasellus egestas tellus rutrum."
+    },
+    {
       "category": "Spike Train",
       "steps": [
-        { "metric": "Behavioural", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
         { "metric": "ISI", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
         { "metric": "Raster", "observation": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." },
         { "metric": "KS Test", "observation": "Nisi ut aliquip ex ea commodo consequat." },

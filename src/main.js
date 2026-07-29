@@ -271,7 +271,7 @@ function renderPipelineView(selectedExample) {
       </header>
 
       <div class="w-full overflow-x-auto pb-8 mb-16">
-        <div class="grid grid-cols-5 gap-x-6 md:gap-x-8 min-w-[1000px]">
+        <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 min-w-[1200px]">
           <!-- Headers Row -->
           ${pipelineData.pipelineColumns.map(col => `
             <div class="flex flex-col justify-end mb-6">

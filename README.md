@@ -24,7 +24,7 @@ The archive structures its diagnostic evaluations across five core modalities of
 
 ### 1. Spike Train
 Evaluates the timing, patterning, and relationships of discrete action potentials.
-* **Metrics:** Behavioural, Inter-Spike Interval (ISI), Raster plots, Kolmogorov-Smirnov (KS) Test, van Rossum distance, Schreiber similarity, Cross-Correlation, and Multiscale Cross-Correlation.
+* **Metrics:** Inter-Spike Interval (ISI), Raster plots, Kolmogorov-Smirnov (KS) Test, van Rossum distance, Schreiber similarity, Cross-Correlation, and Multiscale Cross-Correlation.
 
 ### 2. Membrane Potential
 Analyzes the continuous voltage dynamics of neural membranes.
@@ -38,9 +38,12 @@ Quantifies the storage, transmission, and communication of information within ne
 Assesses the geometric and topological structures of neural population dynamics in high-dimensional state spaces.
 * **Metrics:** Participation Ratio, Procrustes Distance, Subspace Angle, and Tangling.
 
-### 5. Oscillation & Input-Output
+### 5. Oscillation
 Examines rhythmic activity, frequency domains, and the relationships between network inputs and outputs.
 * **Metrics:** Phase Locking Value (PLV), Hilbert Spectrum, Inter-Site Time-Frequency Coherence (ISTTC), Inter-Trial Phase Clustering (ITPC), Morlet Wavelet transforms, Phase-Amplitude Coupling (PAC), and Power Spectral Density (PSD).
+
+### 6. Behavioural 
+* **Metrics:** Accuracy, Specificity and Sensitivity.
 
 ---
 
