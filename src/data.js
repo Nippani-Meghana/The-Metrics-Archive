@@ -427,9 +427,28 @@ export const metricStateDifferences = {
       "System XOR": "Positive joint entropy corresponds to higher joint unpredictability for that pair in GT. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10: No difference between was observed. Pattern 11: No difference between was observed."
     }
   },
-  "it-conditional-entropy": defaultStateDiff,
-  "it-mutual-information": defaultStateDiff,
-  "it-transfer-entropy": defaultStateDiff,
+  "it-conditional-entropy":{
+    ...defaultStateDiff,
+    inDomain: {
+      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "System XOR": "Positive Diff: GT had higher residual uncertainty in j after knowing i. In GT, i was less helpful at predicting j or j itself was more variable in GT. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+    }
+  }
+   ,
+  "it-mutual-information": {
+    ...defaultStateDiff,
+    inDomain: {
+      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "System XOR": "Positive: MI_GT> MI_SUB. The true network shares more information between this pair than the model captures. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+      }
+    },
+  "it-transfer-entropy": {
+    ...defaultStateDiff,
+    inDomain: {
+      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      "System XOR": "Positive: MI_GT> MI_SUB. The true network shares more information between this pair than the model captures. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+      }
+    },
   "dimensionality": defaultStateDiff,
   "phase-locking-value": defaultStateDiff,
   "bm-accuracy": defaultStateDiff,
