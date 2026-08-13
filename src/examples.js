@@ -1,61 +1,28 @@
 export const mockExamplesList = [
-  // System Alpha
+  // System XOR
   { 
-    id: 'alpha-at-rest-1', 
-    system: 'System Alpha',
-    stateKey: 'atRest', 
-    groupId: '1. At Rest', 
-    title: 'Alpha At Rest Case 1', 
-    body: `System Alpha at rest demonstrates a highly stable baseline with minimal noise. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`,
-    pipeline: null 
-  },
-  { 
-    id: 'alpha-in-domain-1', 
-    system: 'System Alpha',
+    id: 'xor-in-domain-1', 
+    system: 'System XOR',
     stateKey: 'inDomain', 
     groupId: '2. In-Domain', 
-    title: 'Alpha In-Domain Case 1', 
-    body: `During in-domain operations, Alpha maintains robust predictive capacity. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
+    title: 'XOR In-Domain Case 1', 
+    body: `Case of Silent Neuron`
   },
   { 
-    id: 'alpha-in-domain-2', 
-    system: 'System Alpha',
-    stateKey: 'inDomain', 
-    groupId: '2. In-Domain', 
-    title: 'Alpha In-Domain Case 2', 
-    body: `Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius, turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis sollicitudin mauris.` 
-  },
-  { 
-    id: 'alpha-out-of-domain-1', 
-    system: 'System Alpha',
+    id: 'xor-out-of-domain-1', 
+    system: 'System XOR',
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
-    title: 'Alpha Out-of-Domain Case 1', 
-    body: `When exposed to out-of-domain stimuli, Alpha exhibits graceful degradation. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
+    title: 'XOR Out-of-Domain Case 1', 
+    body: `Case of Additive Noise` 
   },
   { 
-    id: 'alpha-out-of-domain-2', 
-    system: 'System Alpha',
-    stateKey: 'outOfDomain', 
-    groupId: '3. Out-of-Domain', 
-    title: 'Alpha Out-of-Domain Case 2', 
-    body: `Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.` 
-  },
-  { 
-    id: 'alpha-out-of-domain-3', 
-    system: 'System Alpha',
-    stateKey: 'outOfDomain', 
-    groupId: '3. Out-of-Domain', 
-    title: 'Alpha Out-of-Domain Case 3', 
-    body: `Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui.` 
-  },
-  { 
-    id: 'alpha-black-box-1', 
-    system: 'System Alpha',
+    id: 'xor-black-box-1', 
+    system: 'System XOR',
     stateKey: 'blackBoxModel', 
     groupId: '4. Black Box Model', 
-    title: 'Alpha Black-Box Case', 
-    body: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.`
+    title: 'XOR Black-Box Case', 
+    body: `Case of a different XOR network`
   },
 
   // System Beta

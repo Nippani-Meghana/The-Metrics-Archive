@@ -14,7 +14,7 @@ The archive provides an interface to explore distinct experimental states and ev
 * **Directory & Formulations:** A comprehensive static register of diagnostic formulas, information-theoretic limits, and multi-scale correlations.
 * **Comparative Dashboard:** Practical, dynamic examples of metrics applied across distinct experimental states (e.g., *At Rest*, *In-Domain*, *Out-of-Domain*, *Black-Box*).
 * **Diagnostic Pipeline:** A parallel flow evaluation system that visually maps out how a submitted model is evaluated against biological ground truth across five key metric categories, culminating in a final unified synthesis.
-* **PDF Report Generation:** Quickly export full evaluation reports directly from the pipeline view.
+
 
 ---
 
