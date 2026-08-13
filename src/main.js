@@ -467,7 +467,13 @@ function renderExamples() {
                     <h4 class="text-xl text-[var(--color-heading)] border-b border-[#E5E2EC] dark:border-slate-800 pb-3 mb-6 font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
                     <div class="space-y-6">
                       ${section.metrics.map(m => {
-                         const diffText = (metricStateDifferences[m.id] && metricStateDifferences[m.id][selectedExample.stateKey]) || "Data not available.";
+                         let diffText = "Data not available.";
+                         const stateData = metricStateDifferences[m.id]?.[selectedExample.stateKey];
+                         if (stateData) {
+                           diffText = typeof stateData === 'string' 
+                             ? stateData 
+                             : (stateData[state.selectedSystem] || stateData.default || "Data not available.");
+                         }
                          return `
                            <div class="border-b border-gray-100 dark:border-slate-800 pb-5 last:border-0 last:pb-0">
                              <h5 class="text-gray-900 dark:text-gray-100 text-lg mb-2 font-medium" style="font-family: var(--font-lora), serif">${m.name}</h5>
