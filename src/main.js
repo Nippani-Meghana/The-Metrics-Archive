@@ -459,7 +459,7 @@ function renderExamples() {
                 <p>${selectedExample.body}</p>
               </div>
               
-              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
+              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Observations Across All Metrics</h3>
               
               <div class="space-y-12">
                 ${metricsData.map(section => `
