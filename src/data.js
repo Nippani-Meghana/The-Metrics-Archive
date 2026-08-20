@@ -6,18 +6,6 @@ export const metricsData = [
     title: "1. Spike Train",
     metrics: [
       {
-        id: "st-behavioral",
-        name: "Behavioral",
-        description: "Relates spike train timings and firing characteristics to specific behavioral epochs or events.",
-        mathematics: "R_{behavior}(t) = \\int \\lambda(t) b(t) dt",
-        papers: [
-          { 
-            title: "Truccolo et al., 2005 - A point process framework for relating neural spiking activity to spikes, predecessors, and extrinsic covariates", 
-            url: "https://doi.org/10.1152/jn.00697.2004" 
-          }
-        ]
-      },
-      {
         id: "st-isi",
         name: "Inter-Spike Interval (ISI)",
         description: "Measures the time elapsed between consecutive action potentials, providing insight into the temporal structure and regularity of firing.",
