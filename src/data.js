@@ -400,7 +400,24 @@ const defaultStateDiff = {
 };
 
 export const metricStateDifferences = {
-  "st-behavioral": defaultStateDiff,
+  "bm-accuracy": {
+  ...defaultStateDiff,
+  indomain: {
+    "System XOR": "Both networks classify patterns 00, 10, and 11 perfectly. The only failure occurs in pattern 01, where the emulation incorrectly outputs 0 instead of the expected 1. This traces directly to the silenced interneuron: pattern 01 is the unique input configuration where that neuron would have been active in the ground truth, and its removal breaks the pathway needed to trigger the correct response."
+    }
+  },
+  "bm-specificity": {
+    ...defaultStateDiff,
+    indomain: {
+      "System XOR" : "Specificity measures how well the network correctly rejects negative cases - i.e., outputs 0 when the true output is 0. In XOR, the negative class is patterns 00 and 11."
+    }
+  },
+  "bm-sensitivity": {
+    ...defaultStateDiff,
+    indomain: {
+      "System XOR": "Sensitivity measures how well the network correctly identifies positive cases - i.e., outputs 1 when the true output is 1. In XOR, the positive class is patterns 01 and 10.Sensitivity drops to 0 for pattern 01 — the network outputs 0 when it should output 1 — because the silenced interneuron can no longer drive the positive response. Pattern 10 remains correct (sensitivity = 1)."
+    }
+  },
   "st-isi": defaultStateDiff,
   "st-raster": defaultStateDiff,
   "st-ks-test": defaultStateDiff,
@@ -450,8 +467,5 @@ export const metricStateDifferences = {
       }
     },
   "dimensionality": defaultStateDiff,
-  "phase-locking-value": defaultStateDiff,
-  "bm-accuracy": defaultStateDiff,
-  "bm-specificity": defaultStateDiff,
-  "bm-sensitivity": defaultStateDiff
+  "phase-locking-value": defaultStateDiff
 };
