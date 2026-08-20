@@ -419,8 +419,18 @@ export const metricStateDifferences = {
     }
   },
   "st-isi": defaultStateDiff,
-  "st-raster": defaultStateDiff,
-  "st-ks-test": defaultStateDiff,
+  "st-raster": {
+    ...defaultStateDiff,
+    inDomain:{
+      "System XOR": "The mean Jaccard similarity across all neurons is 0.812, reflecting perfect overlap for most of the network but complete divergence in the silenced pathway i.e., only pattern 01 is affected."
+    }
+  },
+  "st-ks-test": {
+    ...defaultStateDiff,
+    inDomain:{
+      "System XOR": "The mean Jaccard similarity across all neurons is 0.812, reflecting perfect overlap for most of the network but complete divergence in the silenced pathway i.e., only pattern 01 is affected."
+    }
+  },
   "st-van-rossum": defaultStateDiff,
   "st-schreiber": defaultStateDiff,
   "st-cross-correlation": defaultStateDiff,
