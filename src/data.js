@@ -424,14 +424,14 @@ export const metricStateDifferences = {
     ...defaultStateDiff,
     inDomain: {
       default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "System XOR": "Positive joint entropy corresponds to higher joint unpredictability for that pair in GT. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10: No difference between was observed. Pattern 11: No difference between was observed."
+      "System XOR": "Higher joint entropy in GT indicates greater combined unpredictability for that neuron pair. Pattern 01: GT shows elevated joint entropy between Int_A and E, reflecting the missing interneuron's contribution to coordinated variability. Other patterns: no difference."
     }
   },
   "it-conditional-entropy":{
     ...defaultStateDiff,
     inDomain: {
       default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "System XOR": "Positive Diff: GT had higher residual uncertainty in j after knowing i. In GT, i was less helpful at predicting j or j itself was more variable in GT. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+      "System XOR": "Higher conditional entropy in GT means knowing one neuron leaves more residual uncertainty about the other. Pattern 01: H(E | Int_A) is higher in GT — the silent neuron removes a predictive pathway, so E becomes harder to predict even when Int_A is known. Other patterns: no difference."
     }
   }
    ,
@@ -439,14 +439,14 @@ export const metricStateDifferences = {
     ...defaultStateDiff,
     inDomain: {
       default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "System XOR": "Positive: MI_GT> MI_SUB. The true network shares more information between this pair than the model captures. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+      "System XOR": "Higher MI in GT means the true network shares more information between this pair than the emulation captures. Pattern 01: I(Int_A; E) is higher in GT because the intact interneuron mediates information transfer that the silenced version cannot replicate. Other patterns: no difference."
       }
     },
   "it-transfer-entropy": {
     ...defaultStateDiff,
     inDomain: {
       default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-      "System XOR": "Positive: MI_GT> MI_SUB. The true network shares more information between this pair than the model captures. Pattern 00: No difference was observed. Pattern 01: High unpredictability in GT for neuron E and Int_A. Pattern 10:  No difference between was observed. Pattern 11: No difference between was observed."
+      "System XOR": "Positive TE difference (GT > EM) indicates stronger directed information flow. Pattern 01: TE(Int_A -> E) is higher in GT - the intact interneuron carries causal influence that the silenced neuron cannot. This is the directed signature of the broken pathway. Other patterns: no difference."
       }
     },
   "dimensionality": defaultStateDiff,
