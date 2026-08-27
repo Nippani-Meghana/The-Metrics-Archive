@@ -444,7 +444,16 @@ function renderExamples() {
               <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
                 <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
                   <h2 class="text-3xl text-gray-900 dark:text-gray-100 mb-3" style="font-family: var(--font-lora), serif">${selectedExample.title}</h2>
-                  <p class="text-gray-500 dark:text-gray-400 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId} &mdash; ${state.selectedSystem}</p>
+                  <div class="flex items-center gap-2 group relative w-fit">
+                    <p class="text-gray-500 dark:text-gray-400 italic text-lg" style="font-family: var(--font-droid), serif">${selectedExample.groupId} &mdash; ${state.selectedSystem}</p>
+                    <span class="text-[#8271A3] dark:text-slate-400 cursor-help border-b border-dotted border-[#8271A3]/50 dark:border-slate-400/50 text-sm opacity-60 hover:opacity-100 transition-opacity relative z-20">
+                      [?]
+                    </span>
+                    <div class="absolute left-0 top-full mt-2 w-64 bg-slate-900 dark:bg-slate-800 text-slate-100 dark:text-slate-200 text-sm rounded-lg shadow-xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-700 pointer-events-none" style="font-family: var(--font-fira), monospace">
+                       <p class="mb-3 pb-3 border-b border-slate-700/50">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                       <p class="text-slate-300 italic"><span class="font-bold">${state.selectedSystem}:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                  </div>
                 </div>
                 <div class="flex items-center gap-4">
                   <button data-action="toggle-pipeline" class="border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white dark:hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white dark:bg-slate-900 whitespace-nowrap" style="font-family: var(--font-fira), monospace">
@@ -459,7 +468,7 @@ function renderExamples() {
                 <p>${selectedExample.body}</p>
               </div>
               
-              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Observations Across All Metrics</h3>
+              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
               
               <div class="space-y-12">
                 ${metricsData.map(section => `
