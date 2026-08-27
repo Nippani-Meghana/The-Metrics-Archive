@@ -504,13 +504,30 @@ function renderExamples() {
              </div>
              
              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
-                ${renderStateCarouselCard('1. At Rest', [{ title: "Observation", body: differences.atRest || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'atRest' && e.system === state.selectedSystem)])}
-                ${renderStateCarouselCard('2. In-Domain', [{ title: "Observation", body: differences.inDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'inDomain' && e.system === state.selectedSystem)])}
-                ${renderStateCarouselCard('3. Out-of-Domain', [{ title: "Observation", body: differences.outOfDomain || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'outOfDomain' && e.system === state.selectedSystem)])}
-                ${renderStateCarouselCard('4. Black Box Model', [{ title: "Observation", body: differences.blackBoxModel || "Data not available." }, ...mockExamplesList.filter(e => e.stateKey === 'blackBoxModel' && e.system === state.selectedSystem)])}
+                ${renderStateCard('1. At Rest', "Observation", differences.atRest || "Data not available.")}
+                ${renderStateCard('2. In-Domain', "Observation", differences.inDomain || "Data not available.")}
+                ${renderStateCard('3. Out-of-Domain', "Observation", differences.outOfDomain || "Data not available.")}
+                ${renderStateCard('4. Black Box Model', "Observation", differences.blackBoxModel || "Data not available.")}
              </div>
           </div>
         `}
+      </div>
+    </div>
+  `;
+}
+
+function renderStateCard(title, subtitle, body) {
+  return `
+    <div class="flex flex-col bg-[#FCFBFF] dark:bg-slate-900 border border-[#E5E2EC] dark:border-slate-800 rounded-xl h-[380px] w-full shadow-sm overflow-hidden text-gray-800 dark:text-gray-200">
+      <div class="p-8 border-b border-[#E5E2EC]/60 dark:border-slate-800 flex-shrink-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm h-[130px]">
+        <h2 class="text-[1.35rem] text-[var(--color-heading)] font-semibold leading-snug" style="font-family: var(--font-lora), serif">${title}</h2>
+      </div>
+
+      <div class="p-8 flex-grow overflow-y-auto relative hide-scrollbar">
+        <div class="animate-in fade-in duration-500 flex flex-col min-h-full">
+          <h3 class="text-[1.1rem] font-medium text-gray-900 dark:text-gray-100 mb-4 flex-shrink-0" style="font-family: var(--font-lora), serif">${subtitle}</h3>
+          <p class="text-gray-600 dark:text-gray-400 leading-relaxed text-[14px] pb-4" style="font-family: var(--font-fira), monospace">${body}</p>
+        </div>
       </div>
     </div>
   `;
