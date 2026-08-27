@@ -7,7 +7,7 @@ export const mockExamplesList = [
     stateKey: 'inDomain', 
     groupId: '2. In-Domain', 
     title: 'XOR In-Domain Case 1', 
-    body: `During in-domain operations, XOR maintains robust predictive capacity. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
+    body: `One internal neuron is silenced while the system is otherwise evaluated under in-domain conditions.`
   },
   { 
     id: 'xor-out-of-domain-1', 
@@ -15,7 +15,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'XOR Out-of-Domain Case 1', 
-    body: `When exposed to out-of-domain stimuli, XOR exhibits graceful degradation. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
+    body: `Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
   },
   { 
     id: 'xor-black-box-1', 
@@ -33,7 +33,7 @@ export const mockExamplesList = [
     stateKey: 'atRest', 
     groupId: '1. At Rest', 
     title: 'Beta At-Rest Case 1', 
-    body: `System Beta shows a different resting profile characterized by low-frequency oscillations. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci.` 
+    body: `Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci.` 
   },
   { 
     id: 'beta-in-domain-1', 
@@ -41,7 +41,7 @@ export const mockExamplesList = [
     stateKey: 'inDomain', 
     groupId: '2. In-Domain', 
     title: 'Beta In-Domain Case 1', 
-    body: `Under normal conditions, Beta processes inputs with higher latency but greater precision. Donec eu libero sit amet quam egestas semper.` 
+    body: `Donec eu libero sit amet quam egestas semper.` 
   },
 
   { 
@@ -50,7 +50,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'Beta Out-of-Domain Case 1', 
-    body: `Beta is more susceptible to failure when operating outside its trained domain. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet.` 
+    body: `Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet.` 
   },
 
   { 
@@ -59,7 +59,7 @@ export const mockExamplesList = [
     stateKey: 'blackBoxModel', 
     groupId: '4. Black Box Model', 
     title: 'Beta Black-Box Case', 
-    body: `Analysis of Beta's internal states during black-box evaluation.`
+    body: `Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.`
   },
 
 
