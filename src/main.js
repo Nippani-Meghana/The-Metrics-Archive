@@ -1,3 +1,28 @@
+function getStateTooltipContent(groupId, system) {
+  let generalDef = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+  let systemDef = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
+  if (groupId === '1. At Rest') {
+  } else if (groupId === '2. In-Domain') {
+    generalDef = "In-domain refers to data recorded while testing the ground-truth (GT) system under the conditions for which it was validated. For example, a self-driving system operating on roads and following expected lane and navigation conditions would be considered in-domain.";
+    if (system === 'System XOR') {
+      systemDef = "The GT XOR circuit behaves deterministically: the output is 1 for inputs 01 and 10, and 0 for 00 and 11.";
+    }
+  } else if (groupId === '3. Out-of-Domain') {
+    generalDef = "Out-of-domain behavior refers to how a system responds when tested under conditions that differ from those used to validate it. These may include unusual inputs, noise, timing perturbations, or changes in the system's internal dynamics. For example, testing a self-driving system during a sandstorm or with a failed sensor would be considered out-of-domain.";
+    if (system === 'System XOR') {
+      systemDef = "The circuit is tested beyond its controlled/validated conditions, including perturbations such as timing variability, probabilistic synaptic transmission, or novel input patterns.";
+    }
+  } else if (groupId === '4. Black Box Model') {
+    generalDef = "Black-box comparison evaluates systems based on their observable input-output behavior, without requiring their internal circuit structures to be identical.";
+    if (system === 'System XOR') {
+      systemDef = "An XOR circuit with N neurons is compared with another XOR circuit with M neurons, or with a circuit having different connectivity, while both implement the same input-output function. For example, an 8-neuron XOR circuit may be compared against a 5-neuron XOR circuit with different connectivity, provided both exhibit the same XOR input-output behavior.";
+    }
+  }
+
+  return { generalDef, systemDef };
+}
+
 import './index.css';
 import 'katex/dist/katex.min.css';
 import katex from 'katex';
@@ -450,8 +475,11 @@ function renderExamples() {
                       [?]
                     </span>
                     <div class="absolute left-0 top-full mt-2 w-64 bg-slate-900 dark:bg-slate-800 text-slate-100 dark:text-slate-200 text-sm rounded-lg shadow-xl p-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-slate-700 pointer-events-none" style="font-family: var(--font-fira), monospace">
-                       <p class="mb-3 pb-3 border-b border-slate-700/50">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                       <p class="text-slate-300 italic"><span class="font-bold">${state.selectedSystem}:</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                       ${(() => {
+                         const tooltip = getStateTooltipContent(selectedExample.groupId, state.selectedSystem);
+                         return `<p class="mb-3 pb-3 border-b border-slate-700/50">${tooltip.generalDef}</p>
+                         <p class="text-slate-300 italic"><span class="font-bold">${state.selectedSystem}:</span> ${tooltip.systemDef}</p>`;
+                       })()}
                     </div>
                   </div>
                 </div>
