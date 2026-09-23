@@ -111,6 +111,9 @@ let state = {
   isExampleDropdownOpen: false,
   isMetricDropdownOpen: false,
   isDarkMode: false,
+  isSearchOpen: false,
+  searchQuery: '',
+  searchFilter: 'all', // 'all', 'metric', 'system', 'example'
   carouselIndices: {
     '1. At Rest': 0,
     '2. In-Domain': 0,
@@ -118,6 +121,247 @@ let state = {
     '4. Black Box Model': 0
   }
 };
+
+function getSearchIndex() {
+  const items = [];
+
+  // 1. All Metrics
+  metricsData.forEach(section => {
+    section.metrics.forEach(metric => {
+      items.push({
+        type: 'metric',
+        badge: 'Metric',
+        title: metric.name,
+        subtitle: section.title,
+        description: metric.description || '',
+        meta: metric.mathematics ? 'Mathematical formulation available' : '',
+        category: section.title,
+        sectionId: section.id,
+        metricId: metric.id
+      });
+    });
+  });
+
+  // 2. Systems
+  const distinctSystems = [...new Set(mockExamplesList.map(e => e.system))];
+  distinctSystems.forEach(sysName => {
+    const examplesForSys = mockExamplesList.filter(e => e.system === sysName);
+    items.push({
+      type: 'system',
+      badge: 'System',
+      title: sysName,
+      subtitle: `System Architecture & Dynamics (${examplesForSys.length} documented models & cases)`,
+      description: `Neural network architecture and biological ground-truth circuits for ${sysName}. Explores deterministic, in-domain, and perturbation dynamics.`,
+      system: sysName,
+      exampleId: examplesForSys[0]?.id
+    });
+  });
+
+  // 3. Case Examples
+  mockExamplesList.forEach(ex => {
+    const groupName = ex.groupId ? ex.groupId.replace(/^\d+\.\s*/, '') : (ex.group ? ex.group.replace(/^\d+\.\s*/, '') : '');
+    const desc = ex.body || ex.description || '';
+    items.push({
+      type: 'example',
+      badge: 'Case Example',
+      title: ex.title,
+      subtitle: `${ex.system} • ${groupName || 'Comparative Case'}`,
+      description: desc,
+      system: ex.system,
+      exampleId: ex.id,
+      groupId: ex.groupId
+    });
+  });
+
+  return items;
+}
+
+function searchArchive(query, filter = 'all') {
+  const cleanQ = (query || '').trim().toLowerCase();
+  const allItems = getSearchIndex();
+
+  let filtered = allItems;
+  if (filter !== 'all') {
+    filtered = filtered.filter(item => item.type === filter);
+  }
+
+  if (!cleanQ) {
+    return filtered.slice(0, 10); // Top featured items when search query is empty
+  }
+
+  const terms = cleanQ.split(/\s+/).filter(Boolean);
+
+  return filtered.filter(item => {
+    const hayStack = `${item.title} ${item.subtitle} ${item.description} ${item.meta || ''} ${item.badge} ${item.system || ''}`.toLowerCase();
+    return terms.every(term => hayStack.includes(term));
+  });
+}
+
+function renderSearchModal() {
+  if (!state.isSearchOpen) return '';
+
+  const results = searchArchive(state.searchQuery, state.searchFilter);
+  const filterCounts = {
+    all: searchArchive(state.searchQuery, 'all').length,
+    metric: searchArchive(state.searchQuery, 'metric').length,
+    system: searchArchive(state.searchQuery, 'system').length,
+    example: searchArchive(state.searchQuery, 'example').length
+  };
+
+  return `
+    <div id="search-modal-backdrop" class="fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-md flex items-start justify-center pt-8 sm:pt-16 p-4 sm:p-6 overflow-y-auto animate-in fade-in duration-150">
+      <div id="search-modal-container" class="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-slate-800 w-full max-w-3xl overflow-hidden flex flex-col my-auto max-h-[88vh] transition-all transform animate-in zoom-in-95 duration-150">
+        
+        <!-- Search Input Header -->
+        <div class="p-4 sm:p-5 border-b border-gray-100 dark:border-slate-800 flex items-center gap-3.5 bg-white dark:bg-slate-900 shrink-0">
+          <div class="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 flex items-center justify-center shrink-0 border border-purple-100 dark:border-purple-900/40">
+            <i data-lucide="search" class="w-5 h-5 text-[#5F4A8B] dark:text-[#C4B5FD]"></i>
+          </div>
+          <input 
+            type="text" 
+            id="global-search-input" 
+            placeholder="Search metrics, neural systems, case studies, or formulas..." 
+            value="${state.searchQuery.replace(/"/g, '&quot;')}"
+            autocomplete="off"
+            spellcheck="false"
+            class="flex-1 bg-transparent border-0 text-base sm:text-lg font-medium text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-0"
+            style="font-family: var(--font-droid), serif"
+          />
+          ${state.searchQuery ? `
+            <button type="button" data-action="clear-search-query" class="p-1.5 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer" title="Clear query">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          ` : ''}
+          <button type="button" data-action="close-search" class="text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer shadow-2xs" style="font-family: var(--font-fira), monospace">
+            ESC
+          </button>
+        </div>
+
+        <!-- Filter Tags -->
+        <div class="px-4 sm:px-5 py-3 bg-gray-50/90 dark:bg-slate-950/80 border-b border-gray-100 dark:border-slate-800 flex items-center gap-2 overflow-x-auto text-xs shrink-0 select-none hide-scrollbar" style="font-family: var(--font-droid), serif">
+          <button 
+            type="button" 
+            data-action="set-search-filter" 
+            data-filter="all" 
+            class="px-3.5 py-1.5 rounded-lg transition-all shrink-0 font-medium cursor-pointer ${
+              state.searchFilter === 'all' 
+                ? 'bg-[#5F4A8B] text-white shadow-sm ring-1 ring-[#5F4A8B]' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/70 dark:hover:bg-slate-800'
+            }"
+          >
+            All Results (${filterCounts.all})
+          </button>
+          <button 
+            type="button" 
+            data-action="set-search-filter" 
+            data-filter="metric" 
+            class="px-3.5 py-1.5 rounded-lg transition-all shrink-0 font-medium cursor-pointer ${
+              state.searchFilter === 'metric' 
+                ? 'bg-[#5F4A8B] text-white shadow-sm ring-1 ring-[#5F4A8B]' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/70 dark:hover:bg-slate-800'
+            }"
+          >
+            Metrics (${filterCounts.metric})
+          </button>
+          <button 
+            type="button" 
+            data-action="set-search-filter" 
+            data-filter="system" 
+            class="px-3.5 py-1.5 rounded-lg transition-all shrink-0 font-medium cursor-pointer ${
+              state.searchFilter === 'system' 
+                ? 'bg-[#5F4A8B] text-white shadow-sm ring-1 ring-[#5F4A8B]' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/70 dark:hover:bg-slate-800'
+            }"
+          >
+            Systems (${filterCounts.system})
+          </button>
+          <button 
+            type="button" 
+            data-action="set-search-filter" 
+            data-filter="example" 
+            class="px-3.5 py-1.5 rounded-lg transition-all shrink-0 font-medium cursor-pointer ${
+              state.searchFilter === 'example' 
+                ? 'bg-[#5F4A8B] text-white shadow-sm ring-1 ring-[#5F4A8B]' 
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-200/70 dark:hover:bg-slate-800'
+            }"
+          >
+            Case Examples (${filterCounts.example})
+          </button>
+        </div>
+
+        <!-- Results List -->
+        <div class="flex-1 overflow-y-auto p-3 sm:p-5 divide-y divide-gray-100 dark:divide-slate-800/80 min-h-[220px]">
+          ${results.length === 0 ? `
+            <div class="py-16 px-4 text-center">
+              <i data-lucide="file-question" class="w-12 h-12 mx-auto text-gray-300 dark:text-slate-600 mb-3 stroke-1"></i>
+              <h4 class="text-base font-medium text-gray-800 dark:text-gray-200 mb-1" style="font-family: var(--font-lora), serif">No archive entries found</h4>
+              <p class="text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto" style="font-family: var(--font-content), serif">
+                No matching metrics, systems, or case studies found for "${state.searchQuery}". Try searching for terms like "ISI", "XOR", "Beta", "Entropy", or "Spike".
+              </p>
+            </div>
+          ` : results.map(item => {
+            const badgeBg = item.type === 'metric' 
+              ? 'bg-purple-100 text-purple-700 dark:bg-purple-950/80 dark:text-purple-300 border-purple-200 dark:border-purple-800/50' 
+              : item.type === 'system'
+              ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/80 dark:text-blue-300 border-blue-200 dark:border-blue-800/50'
+              : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800/50';
+
+            return `
+              <button 
+                type="button"
+                data-action="select-search-result"
+                data-item-type="${item.type}"
+                data-section-id="${item.sectionId || ''}"
+                data-metric-id="${item.metricId || ''}"
+                data-system="${item.system || ''}"
+                data-example-id="${item.exampleId || ''}"
+                class="w-full text-left p-3.5 sm:p-4 rounded-xl hover:bg-purple-50/50 dark:hover:bg-slate-800/80 transition-all flex items-start gap-4 group cursor-pointer border border-transparent hover:border-purple-200 dark:hover:border-slate-700 my-1"
+              >
+                <div class="shrink-0 mt-0.5">
+                  <span class="inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border ${badgeBg}" style="font-family: var(--font-fira), monospace">
+                    ${item.badge}
+                  </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-baseline justify-between gap-2">
+                    <h3 class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-[#5F4A8B] dark:group-hover:text-[#C4B5FD] transition-colors truncate" style="font-family: var(--font-lora), serif">
+                      ${item.title}
+                    </h3>
+                    <span class="text-xs text-gray-400 dark:text-gray-500 shrink-0 font-normal" style="font-family: var(--font-droid), serif">
+                      ${item.subtitle}
+                    </span>
+                  </div>
+                  <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2 leading-relaxed" style="font-family: var(--font-content), serif">
+                    ${item.description}
+                  </p>
+                  ${item.meta ? `
+                    <div class="mt-2 text-[11px] text-gray-500 dark:text-gray-400 flex items-center gap-1.5" style="font-family: var(--font-fira), monospace">
+                      <i data-lucide="function-square" class="w-3.5 h-3.5 text-[#5F4A8B] dark:text-[#C4B5FD]"></i>
+                      <span>${item.meta}</span>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="shrink-0 self-center text-gray-400 dark:text-slate-500 group-hover:text-[#5F4A8B] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 transition-all">
+                  <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                </div>
+              </button>
+            `;
+          }).join('')}
+        </div>
+
+        <!-- Footer Shortcuts -->
+        <div class="px-4 py-3 bg-gray-50 dark:bg-slate-950/70 border-t border-gray-100 dark:border-slate-800 text-[11px] text-gray-500 dark:text-gray-400 flex flex-wrap items-center justify-between gap-2 shrink-0" style="font-family: var(--font-fira), monospace">
+          <div class="flex items-center gap-3">
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-2xs text-gray-700 dark:text-gray-300 font-semibold">ESC</kbd> to close</span>
+            <span><kbd class="px-1.5 py-0.5 rounded bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 shadow-2xs text-gray-700 dark:text-gray-300 font-semibold">/</kbd> to search</span>
+          </div>
+          <span class="text-gray-400 dark:text-gray-500">The Brain Emulation Metrics Archive</span>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
 
 let bgControls = null;
 
@@ -136,9 +380,15 @@ function renderApp() {
       <div class="min-h-screen relative overflow-hidden transition-colors duration-300">
         <div id="bg-container" class="fixed inset-0 z-0 pointer-events-none transition-opacity duration-1000"></div>
         <div id="app-content" class="relative z-10 w-full h-screen overflow-y-auto"></div>
-        <button data-action="toggle-theme" class="fixed bottom-6 right-6 z-50 p-3 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1">
-          <i data-lucide="${state.isDarkMode ? 'sun' : 'moon'}" class="w-5 h-5"></i>
-        </button>
+        <div id="search-modal-root"></div>
+        <div class="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
+          <button data-action="open-search" class="p-3 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1" title="Search archive (Press /)">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </button>
+          <button data-action="toggle-theme" class="p-3 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1" title="Toggle theme">
+            <i data-lucide="${state.isDarkMode ? 'sun' : 'moon'}" class="w-5 h-5"></i>
+          </button>
+        </div>
       </div>
     `;
     appContent = document.getElementById('app-content');
@@ -156,6 +406,11 @@ function renderApp() {
     ${state.currentView === 'metrics' ? renderMetrics() : ''}
     ${state.currentView === 'examples' ? renderExamples() : ''}
   `;
+
+  const searchModalRoot = document.getElementById('search-modal-root');
+  if (searchModalRoot) {
+    searchModalRoot.innerHTML = renderSearchModal();
+  }
 
   bgControls.setIsEntryPage(state.currentView === 'entry');
 
@@ -179,13 +434,26 @@ function renderEntry() {
       </header>
       <!-- Main Content -->
       <main class="flex-1 flex flex-col items-center justify-center w-full max-w-5xl mx-auto z-20 pb-12 lg:pb-24">
-        <div class="w-full flex flex-col items-center text-center space-y-8 mb-16">
+        <div class="w-full flex flex-col items-center text-center space-y-8 mb-12">
           <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-[5.5rem] tracking-tight text-[var(--color-heading)] font-normal leading-tight" style="font-family: var(--font-cormorant), serif;">
             The Metrics Archive
           </h1>
           <p class="text-lg md:text-xl lg:text-2xl text-gray-500 dark:text-gray-400 italic max-w-3xl leading-relaxed" style="font-family: var(--font-lora), serif;">
             A repository indexing formal mathematical indices, statistical estimators, and empirical performance metrics utilized by the Brain Emulation Challenge.
           </p>
+        </div>
+
+        <!-- Global Search Trigger Input Bar on Entry Screen -->
+        <div class="w-full max-w-xl mb-16">
+          <button data-action="open-search" class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-gray-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:border-[var(--color-heading)]/50 dark:hover:border-[var(--color-heading)]/50 transition-all text-left group">
+            <div class="flex items-center gap-3 text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] transition-colors">
+              <i data-lucide="search" class="w-5 h-5 text-[var(--color-heading)]"></i>
+              <span class="text-sm md:text-base text-gray-500 dark:text-gray-400" style="font-family: var(--font-droid), serif">Quick search across metrics, systems & cases...</span>
+            </div>
+            <kbd class="hidden sm:inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-slate-700" style="font-family: var(--font-fira), monospace">
+              <span>Press</span> <span class="font-semibold text-gray-700 dark:text-gray-300">/</span>
+            </kbd>
+          </button>
         </div>
 
         <div class="flex flex-col md:flex-row w-full max-w-4xl gap-16 md:gap-8 justify-between">
@@ -224,7 +492,10 @@ function renderMetrics() {
   const section = metricsData.find(s => s.id === state.activeSectionId);
   return `
     <div class="relative min-h-screen z-10 flex">
-      <div class="fixed top-8 right-8 z-50 flex gap-6 items-center">
+      <div class="fixed top-8 right-8 z-50 flex gap-4 items-center">
+        <button data-action="open-search" class="p-2.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-gray-200 dark:border-slate-800 text-gray-500 hover:text-[var(--color-heading)] shadow-xs transition-all hover:shadow-sm" title="Search Archive (Press /)">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
         <button data-action="goto-examples" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Examples">
           <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
         </button>
@@ -264,7 +535,7 @@ function renderMetrics() {
 function renderMetricCard(metric) {
   const showMath = state.showMathMap[metric.id];
   return `
-    <article class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-slate-800 transition-all duration-300 hover:shadow-md">
+    <article id="metric-${metric.id}" class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm p-8 rounded-2xl shadow-sm border border-gray-50 dark:border-slate-800 transition-all duration-300 hover:shadow-md">
       <div class="flex justify-between items-start mb-4">
         <h2 class="text-2xl text-[var(--color-heading)]" style="font-family: var(--font-lora), serif">${metric.name}</h2>
         ${metric.mathematics ? `
@@ -306,7 +577,7 @@ function renderPipelineView(selectedExample) {
   const loremIpsums = [
      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-     ".",
+     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
      "Nisi ut aliquip ex ea commodo consequat.",
      "Duis aute irure dolor in reprehenderit in voluptate velit esse.",
      "Cillum dolore eu fugiat nulla pariatur.",
@@ -465,7 +736,10 @@ function renderExamples() {
 
   return `
     <div class="relative min-h-screen z-10 flex justify-center">
-      <div class="fixed top-8 right-8 z-50 flex gap-6 items-center">
+      <div class="fixed top-8 right-8 z-50 flex gap-4 items-center">
+        <button data-action="open-search" class="p-2.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-gray-200 dark:border-slate-800 text-gray-500 hover:text-[var(--color-heading)] shadow-xs transition-all hover:shadow-sm" title="Search Archive (Press /)">
+          <i data-lucide="search" class="w-5 h-5"></i>
+        </button>
         <button data-action="goto-metrics" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Metrics">
           <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
         </button>
@@ -655,6 +929,13 @@ function renderStateCarouselCard(title, items) {
 }
 
 document.addEventListener('click', e => {
+  // Handle clicking on the search modal backdrop (outside the dialog card)
+  if (state.isSearchOpen && e.target && e.target.id === 'search-modal-backdrop') {
+    state.isSearchOpen = false;
+    renderApp();
+    return;
+  }
+
   // Handle clicking outside of dropdowns
   if (!e.target.closest('.dropdown-container')) {
     if (state.isExampleDropdownOpen || state.isMetricDropdownOpen) {
@@ -755,6 +1036,119 @@ document.addEventListener('click', e => {
       '4. Black Box Model': 0
     };
     renderApp();
+  } else if (action === 'open-search') {
+    state.isSearchOpen = true;
+    renderApp();
+    setTimeout(() => {
+      const input = document.getElementById('global-search-input');
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 50);
+  } else if (action === 'close-search') {
+    state.isSearchOpen = false;
+    renderApp();
+  } else if (action === 'clear-search-query') {
+    state.searchQuery = '';
+    renderApp();
+    setTimeout(() => {
+      const input = document.getElementById('global-search-input');
+      if (input) input.focus();
+    }, 50);
+  } else if (action === 'set-search-filter') {
+    state.searchFilter = btn.getAttribute('data-filter');
+    renderApp();
+    setTimeout(() => {
+      const input = document.getElementById('global-search-input');
+      if (input) input.focus();
+    }, 50);
+  } else if (action === 'select-search-result') {
+    const itemType = btn.getAttribute('data-item-type');
+    state.isSearchOpen = false;
+
+    if (itemType === 'metric') {
+      const sectionId = btn.getAttribute('data-section-id');
+      const metricId = btn.getAttribute('data-metric-id');
+      state.currentView = 'metrics';
+      if (sectionId) state.activeSectionId = sectionId;
+      renderApp();
+      setTimeout(() => {
+        const metricEl = document.getElementById(`metric-${metricId}`);
+        if (metricEl) {
+          metricEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          metricEl.classList.add('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4');
+          setTimeout(() => {
+            metricEl.classList.remove('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4');
+          }, 2400);
+        }
+      }, 100);
+    } else if (itemType === 'system') {
+      const system = btn.getAttribute('data-system');
+      const exampleId = btn.getAttribute('data-example-id');
+      state.currentView = 'examples';
+      state.selectedSystem = system;
+      if (exampleId) state.selectedExampleId = exampleId;
+      state.viewMode = 'by-state';
+      renderApp();
+    } else if (itemType === 'example') {
+      const system = btn.getAttribute('data-system');
+      const exampleId = btn.getAttribute('data-example-id');
+      state.currentView = 'examples';
+      if (system) state.selectedSystem = system;
+      if (exampleId) state.selectedExampleId = exampleId;
+      state.viewMode = 'by-state';
+      renderApp();
+    }
+  }
+});
+
+// Search input handling
+document.addEventListener('input', e => {
+  if (e.target && e.target.id === 'global-search-input') {
+    state.searchQuery = e.target.value;
+    
+    // Update only the search results and filter tags rather than rerendering entire app to preserve input focus
+    const modalRoot = document.getElementById('search-modal-root');
+    if (modalRoot) {
+      modalRoot.innerHTML = renderSearchModal();
+      createIcons({ icons });
+      const input = document.getElementById('global-search-input');
+      if (input) {
+        input.focus();
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+      }
+    }
+  }
+});
+
+// Global keyboard shortcuts: '/' to open search, ESC to close
+window.addEventListener('keydown', e => {
+  // If user presses Escape, close search modal if open
+  if (e.key === 'Escape' && state.isSearchOpen) {
+    e.preventDefault();
+    state.isSearchOpen = false;
+    renderApp();
+    return;
+  }
+
+  // If user presses '/' when not focused on an input/textarea, open search
+  if (e.key === '/' && !state.isSearchOpen) {
+    const activeEl = document.activeElement;
+    const isEditing = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable);
+    if (!isEditing) {
+      e.preventDefault();
+      state.isSearchOpen = true;
+      renderApp();
+      setTimeout(() => {
+        const input = document.getElementById('global-search-input');
+        if (input) {
+          input.focus();
+          input.select();
+        }
+      }, 50);
+    }
   }
 });
 
