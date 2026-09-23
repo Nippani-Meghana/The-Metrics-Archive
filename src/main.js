@@ -3,6 +3,7 @@ function getStateTooltipContent(groupId, system) {
   let systemDef = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
   if (groupId === '1. At Rest') {
+    // Add logic for At Rest if needed, currently not requested.
   } else if (groupId === '2. In-Domain') {
     generalDef = "In-domain refers to data recorded while testing the ground-truth (GT) system under the conditions for which it was validated. For example, a self-driving system operating on roads and following expected lane and navigation conditions would be considered in-domain.";
     if (system === 'System XOR') {
@@ -27,10 +28,74 @@ import './index.css';
 import 'katex/dist/katex.min.css';
 import katex from 'katex';
 import { createIcons, icons } from 'lucide';
-import { metricsData, metricStateDifferences } from './data.js';
+import { metricsData, metricStateDifferences, defaultStateDiff } from './data.js';
 import { createConnectomicsBackground } from './ConnectomicsBackground.js';
 import pipelineData from './diagnostic-pipeline.json';
 import { mockExamplesList } from './examples.js';
+
+function getMetricExpectationText(metricId, stateKey, system, example = null) {
+  const matchedExample = example || mockExamplesList.find(e => e.system === system && e.stateKey === stateKey);
+
+  // 1. Check if specific expectation is defined on the example object itself
+  if (matchedExample) {
+    if (matchedExample.metrics && matchedExample.metrics[metricId]) {
+      return matchedExample.metrics[metricId];
+    }
+    if (matchedExample.metricDifferences && matchedExample.metricDifferences[metricId]) {
+      return matchedExample.metricDifferences[metricId];
+    }
+    if (matchedExample.expectations && matchedExample.expectations[metricId]) {
+      return matchedExample.expectations[metricId];
+    }
+    if (matchedExample[metricId] && typeof matchedExample[metricId] === 'string') {
+      return matchedExample[metricId];
+    }
+  }
+
+  const metricDiff = metricStateDifferences[metricId];
+  if (!metricDiff) return "Data not available.";
+
+  // 2. Check if keyed by specific example ID (e.g. 'xor-in-domain-1')
+  if (matchedExample && metricDiff[matchedExample.id]) {
+    const byId = metricDiff[matchedExample.id];
+    if (typeof byId === 'string') return byId;
+    if (typeof byId === 'object' && byId !== null) {
+      return byId[system] || byId.default || "Data not available.";
+    }
+  }
+
+  // 3. Keyed by stateKey (e.g. 'inDomain', 'outOfDomain', 'atRest', 'blackBoxModel')
+  const stateData = metricDiff[stateKey];
+  if (!stateData) {
+    return "Data not available.";
+  }
+
+  if (typeof stateData === 'string') {
+    // If no case example exists for this state in this system and it matches generic placeholder:
+    if (!matchedExample && defaultStateDiff && stateData === defaultStateDiff[stateKey]) {
+      return "Data not available.";
+    }
+    return stateData;
+  }
+
+  if (typeof stateData === 'object' && stateData !== null) {
+    if (system && stateData[system]) {
+      return stateData[system];
+    }
+    if (matchedExample && stateData[matchedExample.id]) {
+      return stateData[matchedExample.id];
+    }
+    // If no case example exists for this state in this system, don't show the default placeholder
+    if (!matchedExample) {
+      return "Data not available.";
+    }
+    if (stateData.default) {
+      return stateData.default;
+    }
+  }
+
+  return "Data not available.";
+}
 
 const allMetrics = metricsData.flatMap(section => section.metrics);
 
@@ -241,7 +306,7 @@ function renderPipelineView(selectedExample) {
   const loremIpsums = [
      "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
      "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-     "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
+     ".",
      "Nisi ut aliquip ex ea commodo consequat.",
      "Duis aute irure dolor in reprehenderit in voluptate velit esse.",
      "Cillum dolore eu fugiat nulla pariatur.",
@@ -388,7 +453,6 @@ function getMetricSelectOptions() {
 
 function renderExamples() {
   const selectedMetric = allMetrics.find(m => m.id === state.selectedMetricId);
-  const differences = metricStateDifferences[state.selectedMetricId] || { atRest: "Data not available.", inDomain: "Data not available.", outOfDomain: "Data not available.", blackBoxModel: "Data not available." };
   
   // Ensure selectedExampleId is valid for the selected system
   let selectedExample = mockExamplesList.find(e => e.id === state.selectedExampleId && e.system === state.selectedSystem);
@@ -504,13 +568,7 @@ function renderExamples() {
                     <h4 class="text-xl text-[var(--color-heading)] border-b border-[#E5E2EC] dark:border-slate-800 pb-3 mb-6 font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
                     <div class="space-y-6">
                       ${section.metrics.map(m => {
-                         let diffText = "Data not available.";
-                         const stateData = metricStateDifferences[m.id]?.[selectedExample.stateKey];
-                         if (stateData) {
-                           diffText = typeof stateData === 'string' 
-                             ? stateData 
-                             : (stateData[state.selectedSystem] || stateData.default || "Data not available.");
-                         }
+                         const diffText = getMetricExpectationText(m.id, selectedExample.stateKey, state.selectedSystem, selectedExample);
                          return `
                            <div class="border-b border-gray-100 dark:border-slate-800 pb-5 last:border-0 last:pb-0">
                              <h5 class="text-gray-900 dark:text-gray-100 text-lg mb-2 font-medium" style="font-family: var(--font-lora), serif">${m.name}</h5>
@@ -531,11 +589,11 @@ function renderExamples() {
                <p class="text-gray-500 dark:text-gray-400 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description} (${state.selectedSystem})</p>
              </div>
              
-             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
-                ${renderStateCard('1. At Rest', "Observation", differences.atRest || "Data not available.")}
-                ${renderStateCard('2. In-Domain', "Observation", differences.inDomain || "Data not available.")}
-                ${renderStateCard('3. Out-of-Domain', "Observation", differences.outOfDomain || "Data not available.")}
-                ${renderStateCard('4. Black Box Model', "Observation", differences.blackBoxModel || "Data not available.")}
+             <div class="grid grid-cols-1 md:grid-cols-2 ${state.selectedSystem === 'System XOR' ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4 max-w-7xl mx-auto">
+                ${state.selectedSystem !== 'System XOR' ? renderStateCard('At Rest', "Observation", getMetricExpectationText(state.selectedMetricId, 'atRest', state.selectedSystem)) : ''}
+                ${renderStateCard('In-Domain', "Observation", getMetricExpectationText(state.selectedMetricId, 'inDomain', state.selectedSystem))}
+                ${renderStateCard('Out-of-Domain', "Observation", getMetricExpectationText(state.selectedMetricId, 'outOfDomain', state.selectedSystem))}
+                ${renderStateCard('Black Box Model', "Observation", getMetricExpectationText(state.selectedMetricId, 'blackBoxModel', state.selectedSystem))}
              </div>
           </div>
         `}

@@ -5,6 +5,7 @@ export const metricsData = [
     id: "spike-train",
     title: "1. Spike Train",
     metrics: [
+      
       {
         id: "st-isi",
         name: "Inter-Spike Interval (ISI)",
@@ -376,15 +377,15 @@ export const examplesData = [
     id: "black-box-model",
     title: "4. Black Box Model",
     description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+    content: "Data Not Available."
   }
 ];
 
-const defaultStateDiff = {
-  atRest: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  inDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  outOfDomain: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-  blackBoxModel: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+export const defaultStateDiff = {
+  atRest: "Data Not Available",
+  inDomain: "Data Not Available",
+  outOfDomain: "Data Not Available",
+  blackBoxModel: "Data Not Available"
 };
 
 export const metricStateDifferences = {
@@ -431,21 +432,21 @@ export const metricStateDifferences = {
   "it-entropy": {
     ...defaultStateDiff,
     inDomain: {
-      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      default: "Data Not Available",
       "System XOR": "The only difference was observed in pattern 01. The difference observed was that the GT model showed a tiny 0.08 bits of uncertainty in Int_A and output neuron 'E', which was absent in the EM."
     }
   },
   "it-joint-entropy": {
     ...defaultStateDiff,
     inDomain: {
-      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      default: "Data Not Available",
       "System XOR": "Higher joint entropy in GT indicates greater combined unpredictability for that neuron pair. Pattern 01: GT shows elevated joint entropy between Int_A and E, reflecting the missing interneuron's contribution to coordinated variability. Other patterns: no difference."
     }
   },
   "it-conditional-entropy":{
     ...defaultStateDiff,
     inDomain: {
-      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      default: "Data Not Available",
       "System XOR": "Higher conditional entropy in GT means knowing one neuron leaves more residual uncertainty about the other. Pattern 01: H(E | Int_A) is higher in GT — the silent neuron removes a predictive pathway, so E becomes harder to predict even when Int_A is known. Other patterns: no difference."
     }
   }
@@ -453,14 +454,14 @@ export const metricStateDifferences = {
   "it-mutual-information": {
     ...defaultStateDiff,
     inDomain: {
-      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      default: "Data Not Available",
       "System XOR": "Higher MI in GT means the true network shares more information between this pair than the emulation captures. Pattern 01: I(Int_A; E) is higher in GT because the intact interneuron mediates information transfer that the silenced version cannot replicate. Other patterns: no difference."
       }
     },
   "it-transfer-entropy": {
     ...defaultStateDiff,
     inDomain: {
-      default: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      default: "Data Not Available",
       "System XOR": "Positive TE difference (GT > EM) indicates stronger directed information flow. Pattern 01: TE(Int_A -> E) is higher in GT - the intact interneuron carries causal influence that the silenced neuron cannot. This is the directed signature of the broken pathway. Other patterns: no difference."
       }
     },

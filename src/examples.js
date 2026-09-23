@@ -23,7 +23,7 @@ export const mockExamplesList = [
     stateKey: 'blackBoxModel', 
     groupId: '4. Black Box Model', 
     title: 'XOR Black-Box Case', 
-    body: `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.`
+    body: `Data Not Available .`
   },
 
   // System Beta

@@ -6,7 +6,7 @@
       "steps": [
         { "metric": "Accuracy", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
         { "metric": "Specificity", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-        { "metric": "Sensitivity", "observation": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." }
+        { "metric": "Sensitivity", "observation": "." }
       ],
       "columnConclusion": "Quisque egestas diam in arcu cursus euismod quis viverra. Ac orci phasellus egestas tellus rutrum."
     },
@@ -14,7 +14,7 @@
       "category": "Spike Train",
       "steps": [
         { "metric": "ISI", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
-        { "metric": "Raster", "observation": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris." },
+        { "metric": "Raster", "observation": "." },
         { "metric": "KS Test", "observation": "Nisi ut aliquip ex ea commodo consequat." },
         { "metric": "Van Rossum", "observation": "Duis aute irure dolor in reprehenderit in voluptate velit esse." },
         { "metric": "Schreiber", "observation": "Cillum dolore eu fugiat nulla pariatur." },
