@@ -421,6 +421,41 @@ function renderApp() {
   createIcons({ icons });
 }
 
+function navigateToMetric(metricId, sectionId) {
+  state.currentView = 'metrics';
+  const targetMetricId = metricId || state.selectedMetricId || allMetrics[0]?.id;
+  if (targetMetricId) {
+    state.selectedMetricId = targetMetricId;
+  }
+  
+  if (!sectionId && targetMetricId) {
+    const matchedSection = metricsData.find(s => s.metrics.some(m => m.id === targetMetricId));
+    if (matchedSection) {
+      sectionId = matchedSection.id;
+    }
+  }
+  
+  if (sectionId) {
+    state.activeSectionId = sectionId;
+  }
+  
+  renderApp();
+  
+  // Smooth scroll directly to the metric card and highlight it
+  setTimeout(() => {
+    if (targetMetricId) {
+      const metricEl = document.getElementById(`metric-${targetMetricId}`);
+      if (metricEl) {
+        metricEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        metricEl.classList.add('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4', 'transition-all', 'duration-500');
+        setTimeout(() => {
+          metricEl.classList.remove('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4');
+        }, 2600);
+      }
+    }
+  }, 120);
+}
+
 function renderEntry() {
   return `
     <div class="min-h-screen flex flex-col w-full px-6 md:px-12 py-8 relative">
@@ -737,16 +772,13 @@ function renderExamples() {
   return `
     <div class="relative min-h-screen z-10 flex justify-center">
       <div class="fixed top-8 right-8 z-50 flex gap-4 items-center">
-        <button data-action="open-search" class="p-2.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-gray-200 dark:border-slate-800 text-gray-500 hover:text-[var(--color-heading)] shadow-xs transition-all hover:shadow-sm" title="Search Archive (Press /)">
+        <button data-action="open-search" class="p-2.5 rounded-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border border-gray-200 dark:border-slate-800 text-gray-500 hover:text-[var(--color-heading)] shadow-xs transition-all hover:shadow-sm cursor-pointer" title="Search Archive (Press /)">
           <i data-lucide="search" class="w-5 h-5"></i>
-        </button>
-        <button data-action="goto-metrics" class="text-[var(--color-heading)] hover:opacity-80 transition-all hover:-translate-y-1 group" title="Go to Metrics">
-          <i data-lucide="bookmark" class="w-10 h-10 fill-current group-hover:drop-shadow-md"></i>
         </button>
       </div>
 
       <div class="w-full max-w-[1400px] p-8 md:p-12 lg:p-16">
-        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-8" style="font-family: var(--font-droid), serif">
+        <button data-action="back-entry" class="flex items-center gap-2 text-sm text-gray-500 hover:text-[var(--color-heading)] transition-colors mb-8 cursor-pointer" style="font-family: var(--font-droid), serif">
           <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Archive
         </button>
 
@@ -758,7 +790,7 @@ function renderExamples() {
           <div class="flex justify-center mb-8">
             <div class="inline-flex bg-gray-100/80 dark:bg-slate-800/80 p-1.5 rounded-xl gap-1">
               ${systems.map(system => `
-                <button data-action="set-system" data-system="${system}" class="px-6 py-2.5 rounded-lg text-sm transition-all duration-300 ${state.selectedSystem === system ? 'bg-white dark:bg-slate-900 shadow-sm text-[var(--color-heading)] font-semibold' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'}" style="font-family: var(--font-droid), serif">
+                <button data-action="set-system" data-system="${system}" class="px-6 py-2.5 rounded-lg text-sm transition-all duration-300 cursor-pointer ${state.selectedSystem === system ? 'bg-white dark:bg-slate-900 shadow-sm text-[var(--color-heading)] font-semibold' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'}" style="font-family: var(--font-droid), serif">
                   ${system}
                 </button>
               `).join('')}
@@ -767,13 +799,13 @@ function renderExamples() {
 
           <div class="flex justify-center items-center gap-4 border-b border-gray-200 dark:border-slate-800 pb-4">
             <div class="flex gap-2 bg-gray-100 dark:bg-slate-800 p-1 rounded-lg">
-              <button data-action="set-view-mode" data-mode="by-state" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-state' ? 'bg-white dark:bg-slate-900 shadow-sm text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}" style="font-family: var(--font-droid), serif">View by State</button>
-              <button data-action="set-view-mode" data-mode="by-metric" class="px-4 py-2 rounded-md text-sm transition-colors ${state.viewMode === 'by-metric' ? 'bg-white dark:bg-slate-900 shadow-sm text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}" style="font-family: var(--font-droid), serif">View by Metric</button>
+              <button data-action="set-view-mode" data-mode="by-state" class="px-4 py-2 rounded-md text-sm transition-colors cursor-pointer ${state.viewMode === 'by-state' ? 'bg-white dark:bg-slate-900 shadow-sm text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}" style="font-family: var(--font-droid), serif">View by State</button>
+              <button data-action="set-view-mode" data-mode="by-metric" class="px-4 py-2 rounded-md text-sm transition-colors cursor-pointer ${state.viewMode === 'by-metric' ? 'bg-white dark:bg-slate-900 shadow-sm text-gray-900 dark:text-gray-100 font-medium' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}" style="font-family: var(--font-droid), serif">View by Metric</button>
             </div>
 
             ${state.viewMode === 'by-state' ? `
               <div class="relative dropdown-container">
-                <button data-action="toggle-example-dropdown" class="flex justify-between items-center w-72 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all" style="font-family: var(--font-droid), serif">
+                <button data-action="toggle-example-dropdown" class="flex justify-between items-center w-72 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all cursor-pointer" style="font-family: var(--font-droid), serif">
                   <span class="truncate">${selectedExample.title}</span>
                   <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 dark:text-gray-400 shrink-0 ml-2"></i>
                 </button>
@@ -787,7 +819,7 @@ function renderExamples() {
 
             ${state.viewMode === 'by-metric' ? `
               <div class="relative dropdown-container">
-                <button data-action="toggle-metric-dropdown" class="flex justify-between items-center w-72 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all" style="font-family: var(--font-droid), serif">
+                <button data-action="toggle-metric-dropdown" class="flex justify-between items-center w-72 bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-gray-300 py-2.5 pl-4 pr-3 rounded-lg hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] focus:outline-none focus:ring-1 focus:ring-[var(--color-heading)] text-sm shadow-sm transition-all cursor-pointer" style="font-family: var(--font-droid), serif">
                   <span class="truncate">${selectedMetric ? selectedMetric.name : 'Select Metric'}</span>
                   <i data-lucide="chevron-down" class="w-4 h-4 text-gray-500 dark:text-gray-400 shrink-0 ml-2"></i>
                 </button>
@@ -822,7 +854,7 @@ function renderExamples() {
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <button data-action="toggle-pipeline" class="border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white dark:hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white dark:bg-slate-900 whitespace-nowrap" style="font-family: var(--font-fira), monospace">
+                  <button data-action="toggle-pipeline" class="border border-gray-300 dark:border-slate-700 text-gray-600 dark:text-gray-300 px-6 py-2.5 rounded-sm hover:bg-[var(--color-heading)] hover:border-[var(--color-heading)] hover:text-white dark:hover:text-white transition-all duration-300 text-[10px] uppercase tracking-widest bg-white dark:bg-slate-900 whitespace-nowrap cursor-pointer" style="font-family: var(--font-fira), monospace">
                     [ ${state.showPipeline ? 'Close' : 'View'} Diagnostic Pipeline ]
                   </button>
                 </div>
@@ -834,18 +866,51 @@ function renderExamples() {
                 <p>${selectedExample.body}</p>
               </div>
               
-              <h3 class="text-2xl text-[var(--color-heading)] mb-8" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
+              <div class="flex items-center justify-between mb-8">
+                <div>
+                  <h3 class="text-2xl text-[var(--color-heading)]" style="font-family: var(--font-lora), serif">Expectations Across All Metrics</h3>
+                  <p class="text-sm text-gray-500 dark:text-gray-400 mt-1" style="font-family: var(--font-droid), serif">Click any metric or its bookmark to jump directly to its formal specification and formulation.</p>
+                </div>
+              </div>
               
               <div class="space-y-12">
                 ${metricsData.map(section => `
                   <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-[#E5E2EC] dark:border-slate-800">
-                    <h4 class="text-xl text-[var(--color-heading)] border-b border-[#E5E2EC] dark:border-slate-800 pb-3 mb-6 font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
+                    <div class="flex items-center justify-between border-b border-[#E5E2EC] dark:border-slate-800 pb-3 mb-6">
+                      <h4 class="text-xl text-[var(--color-heading)] font-semibold" style="font-family: var(--font-lora), serif">${section.title}</h4>
+                      <span class="text-xs text-gray-400 dark:text-gray-500 font-mono">${section.metrics.length} metrics</span>
+                    </div>
                     <div class="space-y-6">
                       ${section.metrics.map(m => {
                          const diffText = getMetricExpectationText(m.id, selectedExample.stateKey, state.selectedSystem, selectedExample);
                          return `
                            <div class="border-b border-gray-100 dark:border-slate-800 pb-5 last:border-0 last:pb-0">
-                             <h5 class="text-gray-900 dark:text-gray-100 text-lg mb-2 font-medium" style="font-family: var(--font-lora), serif">${m.name}</h5>
+                             <div class="flex items-center justify-between gap-3 mb-2">
+                               <button 
+                                 type="button"
+                                 data-action="goto-specific-metric" 
+                                 data-metric-id="${m.id}" 
+                                 data-section-id="${section.id}"
+                                 class="text-left text-gray-900 dark:text-gray-100 text-lg font-medium hover:text-[var(--color-heading)] dark:hover:text-[#C4B5FD] transition-colors cursor-pointer group flex items-center gap-2" 
+                                 style="font-family: var(--font-lora), serif"
+                                 title="View ${m.name} in Metrics Archive"
+                               >
+                                 <span>${m.name}</span>
+                                 <i data-lucide="arrow-up-right" class="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-[var(--color-heading)]"></i>
+                               </button>
+                               <button 
+                                 type="button"
+                                 data-action="goto-specific-metric" 
+                                 data-metric-id="${m.id}" 
+                                 data-section-id="${section.id}"
+                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-md text-[var(--color-heading)] dark:text-purple-300 hover:bg-purple-50 dark:hover:bg-slate-800 border border-purple-200/70 dark:border-purple-900/40 transition-all cursor-pointer shadow-2xs group shrink-0" 
+                                 title="View ${m.name} in Metrics Archive"
+                                 style="font-family: var(--font-droid), serif"
+                               >
+                                 <i data-lucide="bookmark" class="w-3.5 h-3.5 fill-current group-hover:scale-110 transition-transform"></i>
+                                 <span>View Metric</span>
+                               </button>
+                             </div>
                              <p class="text-gray-700 dark:text-gray-300 text-base leading-relaxed" style="font-family: var(--font-fira), monospace">${diffText}</p>
                            </div>
                          `;
@@ -858,9 +923,22 @@ function renderExamples() {
           </div>
         ` : `
           <div class="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-8">
-             <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2">
-               <h2 class="text-3xl text-gray-900 dark:text-gray-100 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
-               <p class="text-gray-500 dark:text-gray-400 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description} (${state.selectedSystem})</p>
+             <div class="border-l-4 border-[var(--color-heading)] pl-8 py-2 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+               <div>
+                 <h2 class="text-3xl text-gray-900 dark:text-gray-100 mb-3" style="font-family: var(--font-lora), serif">${selectedMetric?.name}</h2>
+                 <p class="text-gray-500 dark:text-gray-400 italic text-lg" style="font-family: var(--font-droid), serif">${selectedMetric?.description} (${state.selectedSystem})</p>
+               </div>
+               <button 
+                 type="button"
+                 data-action="goto-specific-metric" 
+                 data-metric-id="${selectedMetric?.id}" 
+                 class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-purple-50/80 dark:bg-slate-800 text-[var(--color-heading)] dark:text-[#C4B5FD] border border-purple-200/80 dark:border-purple-900/50 hover:bg-[var(--color-heading)] hover:text-white dark:hover:bg-[var(--color-heading)] dark:hover:text-white transition-all shadow-xs text-sm font-medium shrink-0 cursor-pointer group"
+                 title="Jump directly to ${selectedMetric?.name} definition in Metrics Archive"
+                 style="font-family: var(--font-droid), serif"
+               >
+                 <i data-lucide="bookmark" class="w-4 h-4 fill-current group-hover:scale-110 transition-transform"></i>
+                 <span>View Definition</span>
+               </button>
              </div>
              
              <div class="grid grid-cols-1 md:grid-cols-2 ${state.selectedSystem === 'System XOR' ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4 max-w-7xl mx-auto">
@@ -969,12 +1047,11 @@ document.addEventListener('click', e => {
     }
     renderApp();
   } else if (action === 'goto-metrics') {
-    state.currentView = 'metrics';
-    const section = metricsData.find(s => s.metrics.some(m => m.id === state.selectedMetricId));
-    if (section) {
-      state.activeSectionId = section.id;
-    }
-    renderApp();
+    navigateToMetric(state.selectedMetricId);
+  } else if (action === 'goto-specific-metric') {
+    const metricId = btn.getAttribute('data-metric-id');
+    const sectionId = btn.getAttribute('data-section-id');
+    navigateToMetric(metricId, sectionId);
   } else if (action === 'set-active-section') {
     state.activeSectionId = btn.getAttribute('data-id');
     renderApp();
@@ -1070,19 +1147,7 @@ document.addEventListener('click', e => {
     if (itemType === 'metric') {
       const sectionId = btn.getAttribute('data-section-id');
       const metricId = btn.getAttribute('data-metric-id');
-      state.currentView = 'metrics';
-      if (sectionId) state.activeSectionId = sectionId;
-      renderApp();
-      setTimeout(() => {
-        const metricEl = document.getElementById(`metric-${metricId}`);
-        if (metricEl) {
-          metricEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          metricEl.classList.add('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4');
-          setTimeout(() => {
-            metricEl.classList.remove('ring-2', 'ring-[var(--color-heading)]', 'ring-offset-4');
-          }, 2400);
-        }
-      }, 100);
+      navigateToMetric(metricId, sectionId);
     } else if (itemType === 'system') {
       const system = btn.getAttribute('data-system');
       const exampleId = btn.getAttribute('data-example-id');
