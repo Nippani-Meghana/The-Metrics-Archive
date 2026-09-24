@@ -382,7 +382,7 @@ function renderApp() {
         <div id="app-content" class="relative z-10 w-full h-screen overflow-y-auto"></div>
         <div id="search-modal-root"></div>
         <div class="fixed bottom-6 right-6 z-40 flex items-center gap-2.5">
-          <button data-action="open-search" class="p-3 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1" title="Search archive (Press /)">
+          <button id="bottom-search-button" data-action="open-search" class="p-3 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1" title="Search archive (Press /)">
             <i data-lucide="search" class="w-5 h-5"></i>
           </button>
           <button data-action="toggle-theme" class="p-3 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-gray-200 dark:border-gray-700 shadow-sm text-gray-500 dark:text-gray-400 hover:text-[var(--color-heading)] dark:hover:text-[var(--color-heading)] transition-all hover:shadow-md hover:-translate-y-1" title="Toggle theme">
@@ -398,6 +398,16 @@ function renderApp() {
     const themeBtn = document.querySelector('[data-action="toggle-theme"] i');
     if (themeBtn) {
       themeBtn.setAttribute('data-lucide', state.isDarkMode ? 'sun' : 'moon');
+    }
+  }
+
+  // Update bottom search button visibility (hidden on Empirical Examples and The Metrics Page)
+  const bottomSearchBtn = document.getElementById('bottom-search-button');
+  if (bottomSearchBtn) {
+    if (state.currentView === 'metrics' || state.currentView === 'examples') {
+      bottomSearchBtn.style.display = 'none';
+    } else {
+      bottomSearchBtn.style.display = '';
     }
   }
 
