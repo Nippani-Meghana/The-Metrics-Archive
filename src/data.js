@@ -247,21 +247,36 @@ export const metricsData = [
         name: "Procrustes Distance",
         description: "A measure used to compare two shapes or point clouds (e.g., neural population states across different conditions or times) by finding the optimal translation, rotation, and uniform scaling to align them.",
         mathematics: "d(X, Y) = \\inf_{R, s, t} || X - sYR - t ||_F",
-        papers: []
+        papers: [
+          {
+          title:"Estimating shape distances on neural representations with limited samples",
+          url: "https://2024.ccneuro.org/pdf/589_Paper_authored_CCN-2024-Authored.pdf"
+          }
+        ]
       },
       {
         id: "subspace-angle",
         name: "Subspace Angle",
         description: "Measures the geometric similarity between two neural subspaces spanned by population activity, useful for determining if the same computation is occurring in different conditions.",
         mathematics: "\\cos(\\theta_k) = \\max_{u \\in U, v \\in V} u^T v",
-        papers: []
+        papers: [
+          {
+            title:"Identifying Feedforward and Feedback Controllable Subspaces of Neural Population Dynamics",
+            url: "https://arxiv.org/html/2408.05875v1"
+          }
+        ]
       },
       {
         id: "tangling",
         name: "Tangling",
         description: "Quantifies how much a neural trajectory crosses itself or nearby trajectories, indicating the potential for robust motor or cognitive control (lower tangling implies more robust predictions).",
         mathematics: "Q(t) = \\max_{t'} \\frac{||\\dot{x}(t) - \\dot{x}(t')||^2}{||x(t) - x(t')||^2 + \\epsilon}",
-        papers: []
+        papers: [
+          {
+          title: "Motor Cortex Embeds Muscle-like Commands in an Untangled Population Response",
+          url: "https://www.sciencedirect.com/science/article/pii/S0896627318300072"
+          }
+        ]
       }
     ]
   },
@@ -321,7 +336,12 @@ export const metricsData = [
         name: "PSD",
         description: "Power Spectral Density (PSD). Describes how the power of a time-series signal or neural recording is distributed over frequency components.",
         mathematics: "S_{xx}(f) = \\lim_{T \\to \\infty} \\mathbf{E}\\left[ \\frac{1}{2T} \\left| \\int_{-T}^T x(t)e^{-i 2\\pi ft} dt \\right|^2 \\right]",
-        papers: []
+        papers: [
+          {
+            title: "Parameterizing neural power spectra",
+            url: "https://www.biorxiv.org/content/10.1101/299859v1.full.pdf"
+          }
+        ]
       }
     ]
   },
