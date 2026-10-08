@@ -379,19 +379,19 @@ export const examplesData = [
     id: "at-rest",
     title: "1. At Rest",
     description: "Analysis of the metrics when the neural population is at rest (spontaneous activity without explicit external task demands).",
-    content: "During periods of rest, we typically observe irregular spiking. The subthreshold membrane potential variance is dominated by balanced excitatory and inhibitory synaptic background noise. The effective dimensionality of the neural manifold is often higher during rest compared to stereotyped task execution, reflecting unconstrained exploration of the state space."
+    content: ""
   },
   {
     id: "in-domain",
     title: "2. In-Domain",
     description: "Metric evaluations when the network is engaged in its trained or stereotyped domain task.",
-    content: "When engaged in an in-domain task, the mutual information between the stimulus and the population response peaks. The neural manifold collapses into a lower-dimensional subspace required for the specific task dynamics. Phase-locking values increase between relevant specialized areas, orchestrating reliable and swift reaction times."
+    content: ""
   },
   {
     id: "out-of-domain",
     title: "3. Out-of-Domain",
     description: "Observations of metric breakdowns when the system encounters novel, unpredicted stimuli.",
-    content: "In out-of-domain scenarios, we observe high ISI C_V as the network searches for appropriate responses. Mutual information regarding the unpredicted features remains low. The neural dimensionality expands slightly as previously silent nodes attempt to construct new representations, often accompanied by desynchronization (decreased PLV) in typical functional hubs."
+    content: ""
   },
   {
     id: "black-box-model",
@@ -440,15 +440,65 @@ export const metricStateDifferences = {
       "System XOR": "The mean Jaccard similarity across all neurons is 0.812, reflecting perfect overlap for most of the network but complete divergence in the silenced pathway i.e., only pattern 01 is affected."
     }
   },
-  "st-van-rossum": defaultStateDiff,
-  "st-schreiber": defaultStateDiff,
-  "st-cross-correlation": defaultStateDiff,
-  "st-multiscale-cross-correlation": defaultStateDiff,
-  "mp-vm-mismatch": defaultStateDiff,
-  "mp-vm-visualization": defaultStateDiff,
-  "mp-psth": defaultStateDiff,
-  "mp-psp-counts": defaultStateDiff,
-  "mp-granger": defaultStateDiff,
+  "st-van-rossum": {
+    ...defaultStateDiff,
+    inDomain: {
+      "System XOR" : "This checks whether the two versions agree on whether a neuron spiked in a trial.The mean is 0.81, six neurons match fully (1.0), E_spike is half right (0.5), and Int_A_spike is completely off (0.0). All the mismatches (10 each) fall in pattern 01."
+    }
+  },
+  "st-schreiber": 
+  {
+    ...defaultStateDiff,
+    inDomain: {
+      "System XOR" : "This smooths each spike train and checks how well the two smoothed curves line up, where 1.0 is a perfect match. Every neuron that can be scored gets 1.0."
+    }
+  },
+  "st-cross-correlation": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  },
+  "st-multiscale-cross-correlation": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  },
+  "mp-vm-mismatch": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  },
+  "mp-vm-visualization": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  },
+  "mp-psth": {
+    ...defaultStateDiff,
+    inDomain:{
+    default: "Data Not Available",
+    "System XOR" : "SUB reproduces GT almost perfectly: 6 of 8 neurons have r = 1, RMSE = 0 and bias = 0. The only mismatch is a small, probably single-spike deficit in SUB for Int_A and E_spike in pattern 01 (RMSE 0.224, bias +0.05). That drives E_spike’s low overall r of 0.565."
+  }
+  },
+  "mp-psp-counts": {
+    ...defaultStateDiff,
+    inDomain:{
+    default: "Data Not Available",
+    "System XOR": "SUB reproduces GT PSP counts exactly for the Pyr/Int units that are silent in some patterns and for all 26 unnamed neurons (all zero), but it drops PSPs in specific neuron-pattern pairs: E (01: 10 EPSP and 10 IPSP lost), Int_A (01, 11: all EPSP and IPSP lost; 10: IPSP lost), and PyrMid_A (01: all 10 EPSP lost). Other neurons match 10/10 or 0/0 in every pattern."
+    }
+  },
+  "mp-granger": 
+  {
+    ...defaultStateDiff,
+    inDomain:{
+    default: "Data Not Available",
+    "System XOR" : "Granger causality connectivity in SUB is identical to GT: in all four patterns (00, 11, 01, 10), both have the same 5 significant edges (q ≤ 0.05), with full overlap and Jaccard = 1.0. This means the directional network structure is fully preserved, including in pattern 01"
+   }
+  },
   "it-entropy": {
     ...defaultStateDiff,
     inDomain: {
@@ -485,6 +535,16 @@ export const metricStateDifferences = {
       "System XOR": "Positive TE difference (GT > EM) indicates stronger directed information flow. Pattern 01: TE(Int_A -> E) is higher in GT - the intact interneuron carries causal influence that the silenced neuron cannot. This is the directed signature of the broken pathway. Other patterns: no difference."
       }
     },
-  "dimensionality": defaultStateDiff,
-  "phase-locking-value": defaultStateDiff
+  "dimensionality": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  },
+  "phase-locking-value": {
+    ...defaultStateDiff,
+    inDomain: {
+
+    }
+  }
 };
