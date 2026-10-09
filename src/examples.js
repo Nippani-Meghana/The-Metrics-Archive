@@ -15,7 +15,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'XOR Out-of-Domain Case 1', 
-    body: `Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
+    body: `Data Not Available.` 
   },
   { 
     id: 'xor-black-box-1', 
@@ -23,7 +23,7 @@ export const mockExamplesList = [
     stateKey: 'blackBoxModel', 
     groupId: '4. Black Box Model', 
     title: 'XOR Black-Box Case', 
-    body: `Data Not Available .`
+    body: `Data Not Available.`
   },
 
   // System Beta
@@ -33,7 +33,7 @@ export const mockExamplesList = [
     stateKey: 'atRest', 
     groupId: '1. At Rest', 
     title: 'Beta At-Rest Case 1', 
-    body: `Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci.` 
+    body: `Data Not Available.` 
   },
   { 
     id: 'beta-in-domain-1', 
@@ -41,7 +41,7 @@ export const mockExamplesList = [
     stateKey: 'inDomain', 
     groupId: '2. In-Domain', 
     title: 'Beta In-Domain Case 1', 
-    body: `Donec eu libero sit amet quam egestas semper.` 
+    body: `Data Not Available.` 
   },
 
   { 
@@ -50,7 +50,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'Beta Out-of-Domain Case 1', 
-    body: `Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet.` 
+    body: `Data Not Available.` 
   },
 
   { 
@@ -59,7 +59,7 @@ export const mockExamplesList = [
     stateKey: 'blackBoxModel', 
     groupId: '4. Black Box Model', 
     title: 'Beta Black-Box Case', 
-    body: `Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.`
+    body: `Data Not Available.`
   },
 
 
