@@ -679,6 +679,53 @@ function getMetricForPipelineStep(stepMetricName) {
   return null;
 }
 
+function isMetricHighlighted(step, selectedExample, activePipeline) {
+  if (!step) return false;
+
+  // 1. Direct property on step in pipeline JSON (e.g. "highlight": true, "highlight": "amber", "flagged": true)
+  if (
+    step.highlight === true ||
+    step.highlight === 'amber' ||
+    step.isHighlighted === true ||
+    step.flagged === true ||
+    step.status === 'amber' ||
+    step.status === 'warning' ||
+    step.alert === true
+  ) {
+    return true;
+  }
+
+  const metricName = (step.metric || '').toLowerCase().trim();
+  const metricInfo = getMetricForPipelineStep(step.metric);
+  const metricId = (metricInfo?.id || '').toLowerCase().trim();
+
+  const listMatches = (list) => {
+    if (!Array.isArray(list)) return false;
+    return list.some(item => {
+      if (typeof item !== 'string') return false;
+      const cleanItem = item.toLowerCase().trim();
+      return cleanItem === metricName || cleanItem === metricId;
+    });
+  };
+
+  // 2. Check highlightedMetrics on selectedExample (dynamic per-example in examples.js)
+  if (selectedExample) {
+    if (listMatches(selectedExample.highlightedMetrics)) return true;
+    if (listMatches(selectedExample.highlightMetrics)) return true;
+    if (listMatches(selectedExample.amberMetrics)) return true;
+    if (selectedExample.pipeline && listMatches(selectedExample.pipeline.highlightedMetrics)) return true;
+  }
+
+  // 3. Check highlightedMetrics on activePipeline (in diagnostic-pipeline.json)
+  if (activePipeline) {
+    if (listMatches(activePipeline.highlightedMetrics)) return true;
+    if (listMatches(activePipeline.highlightMetrics)) return true;
+    if (listMatches(activePipeline.amberMetrics)) return true;
+  }
+
+  return false;
+}
+
 function renderPipelineView(selectedExample) {
   // If the selected example has specific pipeline data provided, use it.
   // Otherwise, fallback to the placeholder lorem ipsum generation.
@@ -782,6 +829,16 @@ function renderPipelineView(selectedExample) {
         <p class="mt-3 text-xs md:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1.5" style="font-family: var(--font-droid), serif">
           <span>Click any metric box in the pipeline below to jump directly to its definition in The Metrics</span>
         </p>
+        <div class="mt-4 flex items-center justify-center gap-6 text-xs text-gray-600 dark:text-gray-400" style="font-family: var(--font-fira), monospace">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xs"></span>
+            <span>Standard Metric</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm border border-amber-400 dark:border-amber-500/80 bg-amber-100/80 dark:bg-amber-950/60 shadow-2xs"></span>
+            <span class="text-amber-900 dark:text-amber-200 font-medium">Scored Metric</span>
+          </span>
+        </div>
         <div class="w-12 h-[1px] bg-gray-300 dark:bg-slate-700 mx-auto mt-6"></div>
       </header>
 
@@ -806,6 +863,28 @@ function renderPipelineView(selectedExample) {
                   const metricInfo = getMetricForPipelineStep(step.metric);
                   const metricIdAttr = metricInfo ? `data-metric-id="${metricInfo.id}"` : '';
                   const sectionIdAttr = metricInfo ? `data-section-id="${metricInfo.sectionId}"` : '';
+                  const isHighlighted = isMetricHighlighted(step, selectedExample, activePipeline);
+
+                  const btnClasses = isHighlighted
+                    ? `w-full h-full min-h-[148px] flex flex-col justify-between border-2 border-amber-400 dark:border-amber-500/80 bg-amber-50/90 dark:bg-amber-950/40 p-4 text-center group hover:bg-amber-100/90 dark:hover:bg-amber-950/70 hover:border-amber-500 dark:hover:border-amber-400 transition-all duration-300 shadow-xs cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2`
+                    : `w-full h-full min-h-[148px] flex flex-col justify-between border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-center group hover:bg-purple-50/40 dark:hover:bg-slate-800/90 hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] transition-all duration-300 shadow-sm cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-heading)] focus:ring-offset-2`;
+
+                  const titleClasses = isHighlighted
+                    ? `text-sm text-amber-950 dark:text-amber-100 tracking-wide font-bold group-hover:text-amber-900 dark:group-hover:text-amber-50 transition-colors`
+                    : `text-sm text-black dark:text-white tracking-wide font-bold group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors`;
+
+                  const arrowIconClasses = isHighlighted
+                    ? `w-3.5 h-3.5 text-amber-600 dark:text-amber-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0`
+                    : `w-3.5 h-3.5 text-gray-400 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0`;
+
+                  const obsClasses = isHighlighted
+                    ? `text-xs text-amber-900/95 dark:text-amber-200/90 leading-relaxed tracking-wide text-center`
+                    : `text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide text-center`;
+
+                  const footerClasses = isHighlighted
+                    ? `mt-3 pt-2 border-t border-amber-200/80 dark:border-amber-800/60 flex items-center justify-center gap-1 text-[10px] text-amber-800 dark:text-amber-300 group-hover:text-amber-950 dark:group-hover:text-amber-100 transition-colors uppercase tracking-wider font-semibold`
+                    : `mt-3 pt-2 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors uppercase tracking-wider font-semibold`;
+
                   return `
                     <div class="w-full h-full flex flex-col">
                       <button
@@ -813,21 +892,22 @@ function renderPipelineView(selectedExample) {
                         data-action="goto-specific-metric"
                         ${metricIdAttr}
                         ${sectionIdAttr}
-                        class="w-full h-full min-h-[148px] flex flex-col justify-between border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-center group hover:bg-purple-50/40 dark:hover:bg-slate-800/90 hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] transition-all duration-300 shadow-sm cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-heading)] focus:ring-offset-2"
+                        class="${btnClasses}"
                         title="Click to view ${step.metric} in The Metrics"
                       >
                         <div>
                           <div class="flex items-center justify-center gap-1.5 mb-2">
-                            <span class="text-sm text-black dark:text-white tracking-wide font-bold group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors" style="font-family: var(--font-fira), monospace">
+                            ${isHighlighted ? `<span class="w-2 h-2 rounded-full bg-amber-500 dark:bg-amber-400 shrink-0 shadow-2xs"></span>` : ''}
+                            <span class="${titleClasses}" style="font-family: var(--font-fira), monospace">
                               ${step.metric}
                             </span>
-                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"></i>
+                            <i data-lucide="arrow-up-right" class="${arrowIconClasses}"></i>
                           </div>
-                          <div class="text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide text-center" style="font-family: var(--font-fira), monospace">
+                          <div class="${obsClasses}" style="font-family: var(--font-fira), monospace">
                             ${getObservation(cIdx, r)}
                           </div>
                         </div>
-                        <div class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors uppercase tracking-wider font-semibold" style="font-family: var(--font-fira), monospace">
+                        <div class="${footerClasses}" style="font-family: var(--font-fira), monospace">
                           <span>View in Metrics</span>
                           <i data-lucide="chevron-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
                         </div>

@@ -1,12 +1,13 @@
 {
   "evaluationTitle": "Submitted Model 1",
+  "highlightedMetrics": ["Accuracy", "Sensitivity"],
   "pipelineColumns": [
     {
       "category": "Behavioral Metrics",
       "steps": [
-        { "metric": "Accuracy", "observation": "Obs: 3 of 4 patterns correct (0.75). Only 01 fails. The fault is localized to one input. what kind of error?" },
-        { "metric": "Specificity", "observation": "Obs: 1.0. Patterns 00 and 11 correctly output 0. No false positives. what about the positives?" },
-        { "metric": "Sensitivity", "observation": "Obs: 0.5. Pattern 10 is correct, but 01 outputs 0 instead of 1. A false negative: a pathway needed for output 1 is missing. This leads to spike train to answer which neurons. " }
+        { "metric": "Accuracy", "observation": "Obs: 3 of 4 patterns correct (0.75). Only 01 fails. The fault is localized to one input. What kind of error?", "highlight": true },
+        { "metric": "Specificity", "observation": "Obs: 1.0. Patterns 00 and 11 correctly output 0. No false positives. What about the positives?", "highlight": true  },
+        { "metric": "Sensitivity", "observation": "Obs: 0.5. Pattern 10 is correct, but 01 outputs 0 instead of 1. A false negative: A pathway needed for output 1 is missing. This leads to spike train to answer which neurons. ", "highlight": true }
       ],
       "columnConclusion": "One input fails, as a false negative. A pathway needed for a positive output is missing, but behavior alone can’t say where."
     },

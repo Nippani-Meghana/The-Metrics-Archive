@@ -10,7 +10,8 @@ export const mockExamplesList = [
     groupId: '2. In-Domain', 
     title: 'XOR In-Domain Case 1', 
     pipeline: pipelineData,
-    body: `During in-domain operations, XOR maintains robust predictive capacity. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
+    highlightedMetrics: ['Accuracy', 'Sensitivity', 'Specificity'], // Easily choose which metrics to highlight in amber
+    body: `One internal neuron is silenced while the system is otherwise evaluated under in-domain conditions.`
   },
   { 
     id: 'xor-out-of-domain-1', 
@@ -18,6 +19,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'XOR Out-of-Domain Case 1', 
+    highlightedMetrics: ['ISI', 'VM Mismatch'], // Differs dynamically example to example
     body: `When exposed to out-of-domain stimuli, XOR exhibits graceful degradation. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
   },
   { 
