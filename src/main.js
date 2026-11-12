@@ -710,28 +710,68 @@ function renderPipelineView(selectedExample) {
      "Velit scelerisque in dictum non consectetur a. Purus gravida quis blandit turpis cursus. Diam phasellus vestibulum lorem sed risus ultricies tristique nulla. Adipiscing commodo elit at imperdiet dui accumsan sit."
   ];
 
+  const activePipeline = customPipeline || pipelineData;
+
+  const getCols = () => {
+    if (activePipeline?.pipelineColumns) return activePipeline.pipelineColumns;
+    if (activePipeline?.columns) return activePipeline.columns;
+    return pipelineData.pipelineColumns;
+  };
+
   const getObservation = (cIdx, sIdx) => {
-    if (customPipeline && customPipeline.columns && customPipeline.columns[cIdx] && customPipeline.columns[cIdx].steps[sIdx]) {
-      return customPipeline.columns[cIdx].steps[sIdx].observation;
+    const cols = getCols();
+    if (cols && cols[cIdx] && cols[cIdx].steps && cols[cIdx].steps[sIdx]) {
+      const obs = cols[cIdx].steps[sIdx].observation;
+      if (obs) {
+        // If this is XOR In-Domain Case 1 (or default), or if a custom pipeline is set, always use the defined observation
+        if (!selectedExample || selectedExample.id === 'xor-in-domain-1' || customPipeline) {
+          return obs;
+        }
+        // If it's a customized observation (not placeholder lorem ipsum), use it
+        if (!obs.startsWith('Lorem ipsum') && !obs.startsWith('Sed do eiusmod') && !obs.startsWith('Ut enim') && !obs.startsWith('Nisi ut')) {
+          return obs;
+        }
+      }
     }
     return loremIpsums[(cIdx * 3 + sIdx + shiftAmount) % loremIpsums.length];
   };
 
   const getConclusion = (cIdx) => {
-    if (customPipeline && customPipeline.columns && customPipeline.columns[cIdx]) {
-      return customPipeline.columns[cIdx].conclusion;
+    const cols = getCols();
+    if (cols && cols[cIdx]) {
+      const conc = cols[cIdx].columnConclusion || cols[cIdx].conclusion;
+      if (conc) {
+        if (!selectedExample || selectedExample.id === 'xor-in-domain-1' || customPipeline) {
+          return conc;
+        }
+        if (!conc.startsWith('Phasellus') && !conc.startsWith('Nisl condimentum') && !conc.startsWith('Morbi non') && !conc.startsWith('Tristique senectus') && !conc.startsWith('Cursus metus') && !conc.startsWith('Quisque egestas')) {
+          return conc;
+        }
+      }
     }
     return conclusions[(cIdx + shiftAmount) % conclusions.length];
   };
 
   const getSynthesis = () => {
-    if (customPipeline && customPipeline.finalSynthesis) {
-      return customPipeline.finalSynthesis;
+    if (activePipeline) {
+      const synth = activePipeline.finalUnifiedSynthesis || activePipeline.finalSynthesis;
+      if (synth) {
+        if (!selectedExample || selectedExample.id === 'xor-in-domain-1' || customPipeline) {
+          return synth;
+        }
+        if (!synth.startsWith('Lorem ipsum')) {
+          return synth;
+        }
+      }
     }
     return finalSyntheses[shiftAmount % finalSyntheses.length];
   };
 
-  const evalTitle = selectedExample ? selectedExample.title : pipelineData.evaluationTitle;
+  const evalTitle = selectedExample ? selectedExample.title : (activePipeline.evaluationTitle || pipelineData.evaluationTitle);
+
+  const cols = getCols();
+  const maxSteps = Math.max(...cols.map(col => col.steps.length));
+  const stepIndices = Array.from({ length: maxSteps }, (_, i) => i);
 
   return `
     <div class="w-full bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 p-8 md:p-12 mb-12 animate-in fade-in zoom-in-[0.98] slide-in-from-top-6 duration-700 ease-out shadow-sm origin-top">
@@ -746,66 +786,113 @@ function renderPipelineView(selectedExample) {
       </header>
 
       <div class="w-full overflow-x-auto pb-8 mb-16">
-        <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 min-w-[1200px]">
+        <div class="min-w-[1200px] flex flex-col space-y-3">
           <!-- Headers Row -->
-          ${pipelineData.pipelineColumns.map(col => `
-            <div class="flex flex-col justify-end mb-6">
-              <h4 class="text-center uppercase tracking-widest text-sm text-black dark:text-white font-bold flex items-end justify-center" style="font-family: var(--font-fira), monospace">${col.category}</h4>
-            </div>
-          `).join('')}
-          
-          <!-- Steps Row -->
-          ${pipelineData.pipelineColumns.map((col, cIdx) => `
-            <div class="flex flex-col items-center w-full relative flex-1">
-              ${col.steps.map((step, idx) => {
-                const metricInfo = getMetricForPipelineStep(step.metric);
-                const metricIdAttr = metricInfo ? `data-metric-id="${metricInfo.id}"` : '';
-                const sectionIdAttr = metricInfo ? `data-section-id="${metricInfo.sectionId}"` : '';
-                return `
-                <div class="w-full relative flex flex-col items-center">
-                  <button
-                    type="button"
-                    data-action="goto-specific-metric"
-                    ${metricIdAttr}
-                    ${sectionIdAttr}
-                    class="w-full border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-center group hover:bg-purple-50/40 dark:hover:bg-slate-800/90 hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] transition-all duration-300 shadow-sm cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-heading)] focus:ring-offset-2"
-                    title="Click to view ${step.metric} in The Metrics"
-                  >
-                    <div class="flex items-center justify-center gap-1.5 mb-2">
-                      <span class="text-sm text-black dark:text-white tracking-wide font-bold group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors" style="font-family: var(--font-fira), monospace">
-                        ${step.metric}
-                      </span>
-                      <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"></i>
-                    </div>
-                    <div class="text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">
-                      ${getObservation(cIdx, idx)}
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors uppercase tracking-wider font-semibold" style="font-family: var(--font-fira), monospace">
-                      <span>View in Metrics</span>
-                      <i data-lucide="chevron-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
-                    </div>
-                  </button>
-                  ${idx < col.steps.length - 1 ? `
-                    <div class="h-8 w-0.5 bg-gray-400 dark:bg-slate-600 my-1 relative">
-                       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
-                    </div>
-                  ` : ''}
-                </div>
-              `;
-              }).join('')}
-              
-              <div class="w-0.5 bg-gray-400 dark:bg-slate-600 my-2 relative flex-1 min-h-[3rem]">
-                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
+          <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 mb-3">
+            ${cols.map(col => `
+              <div class="h-14 flex items-center justify-center text-center px-2 border-b-2 border-gray-900 dark:border-gray-100">
+                <h4 class="uppercase tracking-widest text-xs md:text-sm text-black dark:text-white font-bold leading-snug" style="font-family: var(--font-fira), monospace">${col.category}</h4>
               </div>
+            `).join('')}
+          </div>
+          
+          <!-- Steps Rows with Arrows -->
+          ${stepIndices.map(r => `
+            <!-- Step Row ${r + 1} -->
+            <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 items-stretch">
+              ${cols.map((col, cIdx) => {
+                const step = col.steps[r];
+                if (step) {
+                  const metricInfo = getMetricForPipelineStep(step.metric);
+                  const metricIdAttr = metricInfo ? `data-metric-id="${metricInfo.id}"` : '';
+                  const sectionIdAttr = metricInfo ? `data-section-id="${metricInfo.sectionId}"` : '';
+                  return `
+                    <div class="w-full h-full flex flex-col">
+                      <button
+                        type="button"
+                        data-action="goto-specific-metric"
+                        ${metricIdAttr}
+                        ${sectionIdAttr}
+                        class="w-full h-full min-h-[148px] flex flex-col justify-between border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-center group hover:bg-purple-50/40 dark:hover:bg-slate-800/90 hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] transition-all duration-300 shadow-sm cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-heading)] focus:ring-offset-2"
+                        title="Click to view ${step.metric} in The Metrics"
+                      >
+                        <div>
+                          <div class="flex items-center justify-center gap-1.5 mb-2">
+                            <span class="text-sm text-black dark:text-white tracking-wide font-bold group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors" style="font-family: var(--font-fira), monospace">
+                              ${step.metric}
+                            </span>
+                            <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"></i>
+                          </div>
+                          <div class="text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide text-center" style="font-family: var(--font-fira), monospace">
+                            ${getObservation(cIdx, r)}
+                          </div>
+                        </div>
+                        <div class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors uppercase tracking-wider font-semibold" style="font-family: var(--font-fira), monospace">
+                          <span>View in Metrics</span>
+                          <i data-lucide="chevron-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
+                        </div>
+                      </button>
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div class="w-full h-full min-h-[148px] flex items-center justify-center">
+                      <div class="w-0.5 h-full bg-gray-300/80 dark:bg-slate-700/80"></div>
+                    </div>
+                  `;
+                }
+              }).join('')}
+            </div>
+
+            <!-- Connecting Arrow Row -->
+            <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 py-1">
+              ${cols.map(col => {
+                const hasNextStep = r + 1 < col.steps.length;
+                if (hasNextStep) {
+                  return `
+                    <div class="flex items-center justify-center h-7 relative">
+                      <div class="w-0.5 h-full bg-gray-400 dark:bg-slate-600 relative">
+                        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
+                      </div>
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div class="flex items-center justify-center h-7">
+                      <div class="w-0.5 h-full bg-gray-300/80 dark:bg-slate-700/80"></div>
+                    </div>
+                  `;
+                }
+              }).join('')}
             </div>
           `).join('')}
 
+          <!-- Final Arrow Row leading into Conclusions -->
+          <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 py-1">
+            ${cols.map(() => `
+              <div class="flex items-center justify-center h-7 relative">
+                <div class="w-0.5 h-full bg-gray-400 dark:bg-slate-600 relative">
+                  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
           <!-- Conclusions Row -->
-          ${pipelineData.pipelineColumns.map((col, cIdx) => `
-            <div class="w-full border-t-2 border-gray-300 dark:border-slate-700 pt-6 text-center mt-2">
-               <div class="text-sm text-black dark:text-gray-300 italic leading-relaxed" style="font-family: var(--font-lora), serif">${getConclusion(cIdx)}</div>
-            </div>
-          `).join('')}
+          <div class="grid grid-cols-6 gap-x-6 md:gap-x-8 items-stretch pt-1">
+            ${cols.map((col, cIdx) => `
+              <div class="w-full flex flex-col">
+                <div class="w-full h-full min-h-[140px] flex flex-col justify-between border-2 border-gray-300 dark:border-slate-700 bg-gray-50/70 dark:bg-slate-900/80 p-4 text-center shadow-xs">
+                  <div class="text-[11px] uppercase tracking-widest text-[var(--color-heading)] dark:text-[#C4B5FD] font-bold mb-2 pb-1.5 border-b border-gray-200 dark:border-slate-800" style="font-family: var(--font-fira), monospace">
+                    Conclusion
+                  </div>
+                  <div class="text-xs text-black dark:text-gray-300 italic leading-relaxed my-auto" style="font-family: var(--font-lora), serif">
+                    ${getConclusion(cIdx)}
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
 
