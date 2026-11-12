@@ -613,6 +613,72 @@ function renderMetricCard(metric) {
   `;
 }
 
+const PIPELINE_METRIC_MAP = {
+  // Behavioral Metrics
+  'Accuracy': { id: 'bm-accuracy', sectionId: 'behavioral-metrics' },
+  'Specificity': { id: 'bm-specificity', sectionId: 'behavioral-metrics' },
+  'Sensitivity': { id: 'bm-sensitivity', sectionId: 'behavioral-metrics' },
+
+  // Spike Train
+  'ISI': { id: 'st-isi', sectionId: 'spike-train' },
+  'Raster': { id: 'st-raster', sectionId: 'spike-train' },
+  'KS Test': { id: 'st-ks-test', sectionId: 'spike-train' },
+  'Van Rossum': { id: 'st-van-rossum', sectionId: 'spike-train' },
+  'Schreiber': { id: 'st-schreiber', sectionId: 'spike-train' },
+  'Cross-Correlation': { id: 'st-cross-correlation', sectionId: 'spike-train' },
+  'Multiscale Cross-Correlation': { id: 'st-multiscale-cross-correlation', sectionId: 'spike-train' },
+
+  // Membrane Potential
+  'VM Mismatch': { id: 'mp-vm-mismatch', sectionId: 'membrane-potential' },
+  'Vm Mismatch': { id: 'mp-vm-mismatch', sectionId: 'membrane-potential' },
+  'Vm Visualization': { id: 'mp-vm-visualization', sectionId: 'membrane-potential' },
+  'PSTH': { id: 'mp-psth', sectionId: 'membrane-potential' },
+  'PSP Counts': { id: 'mp-psp-counts', sectionId: 'membrane-potential' },
+  'Granger Causality': { id: 'mp-granger', sectionId: 'membrane-potential' },
+
+  // Information Theory
+  'Entropy': { id: 'it-entropy', sectionId: 'information-theory' },
+  'Joint Entropy': { id: 'it-joint-entropy', sectionId: 'information-theory' },
+  'Conditional Entropy': { id: 'it-conditional-entropy', sectionId: 'information-theory' },
+  'Mutual Information': { id: 'it-mutual-information', sectionId: 'information-theory' },
+  'Transfer Entropy': { id: 'it-transfer-entropy', sectionId: 'information-theory' },
+
+  // Manifold
+  'Participation Ratio': { id: 'dimensionality', sectionId: 'neural-manifolds' },
+  'Procrustes Distance': { id: 'procrustes-distance', sectionId: 'neural-manifolds' },
+  'Subspace Angle': { id: 'subspace-angle', sectionId: 'neural-manifolds' },
+  'Tangling': { id: 'tangling', sectionId: 'neural-manifolds' },
+
+  // Oscillation/Input-Output
+  'PLV': { id: 'phase-locking-value', sectionId: 'oscillation-based' },
+  'Hilbert Spectrum': { id: 'hilbert-spectrum', sectionId: 'oscillation-based' },
+  'ISTTC': { id: 'isttc', sectionId: 'oscillation-based' },
+  'ITPC': { id: 'itpc', sectionId: 'oscillation-based' },
+  'Morlet Wavelet': { id: 'morlet-wavelet', sectionId: 'oscillation-based' },
+  'PAC': { id: 'pac', sectionId: 'oscillation-based' },
+  'PSD': { id: 'psd', sectionId: 'oscillation-based' }
+};
+
+function getMetricForPipelineStep(stepMetricName) {
+  if (PIPELINE_METRIC_MAP[stepMetricName]) {
+    return PIPELINE_METRIC_MAP[stepMetricName];
+  }
+  const clean = stepMetricName.toLowerCase().trim();
+  for (const sec of metricsData) {
+    for (const m of sec.metrics) {
+      if (
+        m.name.toLowerCase() === clean ||
+        m.id.toLowerCase() === clean ||
+        m.name.toLowerCase().includes(clean) ||
+        clean.includes(m.name.toLowerCase())
+      ) {
+        return { id: m.id, sectionId: sec.id };
+      }
+    }
+  }
+  return null;
+}
+
 function renderPipelineView(selectedExample) {
   // If the selected example has specific pipeline data provided, use it.
   // Otherwise, fallback to the placeholder lorem ipsum generation.
@@ -673,7 +739,10 @@ function renderPipelineView(selectedExample) {
         <h3 class="text-4xl text-gray-900 dark:text-gray-50 font-light tracking-tight" style="font-family: var(--font-cormorant), serif">
           ${evalTitle} <span class="italic text-gray-400 dark:text-gray-500">vs. Ground Truth</span>
         </h3>
-        <div class="w-12 h-[1px] bg-gray-300 dark:bg-slate-700 mx-auto mt-8"></div>
+        <p class="mt-3 text-xs md:text-sm text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1.5" style="font-family: var(--font-droid), serif">
+          <span>Click any metric box in the pipeline below to jump directly to its definition in The Metrics</span>
+        </p>
+        <div class="w-12 h-[1px] bg-gray-300 dark:bg-slate-700 mx-auto mt-6"></div>
       </header>
 
       <div class="w-full overflow-x-auto pb-8 mb-16">
@@ -688,19 +757,42 @@ function renderPipelineView(selectedExample) {
           <!-- Steps Row -->
           ${pipelineData.pipelineColumns.map((col, cIdx) => `
             <div class="flex flex-col items-center w-full relative flex-1">
-              ${col.steps.map((step, idx) => `
+              ${col.steps.map((step, idx) => {
+                const metricInfo = getMetricForPipelineStep(step.metric);
+                const metricIdAttr = metricInfo ? `data-metric-id="${metricInfo.id}"` : '';
+                const sectionIdAttr = metricInfo ? `data-section-id="${metricInfo.sectionId}"` : '';
+                return `
                 <div class="w-full relative flex flex-col items-center">
-                  <div class="w-full border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 text-center group hover:bg-gray-50 dark:hover:bg-slate-800 hover:border-black dark:hover:border-slate-500 transition-all duration-300 shadow-sm">
-                    <div class="text-sm text-black dark:text-white mb-2 tracking-wide font-bold" style="font-family: var(--font-fira), monospace">${step.metric}</div>
-                    <div class="text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">${getObservation(cIdx, idx)}</div>
-                  </div>
+                  <button
+                    type="button"
+                    data-action="goto-specific-metric"
+                    ${metricIdAttr}
+                    ${sectionIdAttr}
+                    class="w-full border-2 border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-4 text-center group hover:bg-purple-50/40 dark:hover:bg-slate-800/90 hover:border-[var(--color-heading)] dark:hover:border-[var(--color-heading)] transition-all duration-300 shadow-sm cursor-pointer block hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-heading)] focus:ring-offset-2"
+                    title="Click to view ${step.metric} in The Metrics"
+                  >
+                    <div class="flex items-center justify-center gap-1.5 mb-2">
+                      <span class="text-sm text-black dark:text-white tracking-wide font-bold group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors" style="font-family: var(--font-fira), monospace">
+                        ${step.metric}
+                      </span>
+                      <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-gray-400 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0"></i>
+                    </div>
+                    <div class="text-xs text-black dark:text-gray-300 leading-relaxed tracking-wide" style="font-family: var(--font-fira), monospace">
+                      ${getObservation(cIdx, idx)}
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-800/80 flex items-center justify-center gap-1 text-[10px] text-gray-400 dark:text-gray-500 group-hover:text-[var(--color-heading)] dark:group-hover:text-[#C4B5FD] transition-colors uppercase tracking-wider font-semibold" style="font-family: var(--font-fira), monospace">
+                      <span>View in Metrics</span>
+                      <i data-lucide="chevron-right" class="w-3 h-3 group-hover:translate-x-0.5 transition-transform"></i>
+                    </div>
+                  </button>
                   ${idx < col.steps.length - 1 ? `
                     <div class="h-8 w-0.5 bg-gray-400 dark:bg-slate-600 my-1 relative">
                        <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
                     </div>
                   ` : ''}
                 </div>
-              `).join('')}
+              `;
+              }).join('')}
               
               <div class="w-0.5 bg-gray-400 dark:bg-slate-600 my-2 relative flex-1 min-h-[3rem]">
                  <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 text-black dark:text-white text-xs font-bold leading-none">↓</div>
