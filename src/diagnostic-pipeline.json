@@ -14,24 +14,24 @@
     {
       "category": "Spike Train",
       "steps": [
-        { "metric": "ISI", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." },
+        { "metric": "ISI", "observation": "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", "highlight": true  },
         { "metric": "Raster", "observation": "." },
-        { "metric": "KS Test", "observation": "Nisi ut aliquip ex ea commodo consequat." },
-        { "metric": "Van Rossum", "observation": "Duis aute irure dolor in reprehenderit in voluptate velit esse." },
-        { "metric": "Schreiber", "observation": "Cillum dolore eu fugiat nulla pariatur." },
-        { "metric": "Cross-Correlation", "observation": "Excepteur sint occaecat cupidatat non proident." },
-        { "metric": "Multiscale Cross-Correlation", "observation": "Sunt in culpa qui officia deserunt mollit anim id est laborum." }
+        { "metric": "KS Test", "observation": "Nisi ut aliquip ex ea commodo consequat.", "highlight": true  },
+        { "metric": "Van Rossum", "observation": "Duis aute irure dolor in reprehenderit in voluptate velit esse." , "highlight": true },
+        { "metric": "Schreiber", "observation": "Cillum dolore eu fugiat nulla pariatur." , "highlight": true },
+        { "metric": "Cross-Correlation", "observation": "Excepteur sint occaecat cupidatat non proident." , "highlight": true },
+        { "metric": "Multiscale Cross-Correlation", "observation": "Sunt in culpa qui officia deserunt mollit anim id est laborum.", "highlight": true  }
       ],
       "columnConclusion": "Phasellus egestas tellus rutrum tellus pellentesque eu tincidunt. Sagittis purus sit amet volutpat consequat mauris nunc congue."
     },
     {
       "category": "Membrane Potential",
       "steps": [
-        { "metric": "VM Mismatch", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-        { "metric": "Vm Visualization", "observation": "Viverra suspendisse potenti nullam ac tortor vitae purus faucibus." },
-        { "metric": "PSTH", "observation": "Amet est placerat in egestas erat imperdiet sed euismod." },
-        { "metric": "PSP Counts", "observation": "Ac feugiat amet consectetur adipiscing elit pellentesque habitant morbi." },
-        { "metric": "Granger Causality", "observation": "Tincidunt eget nullam non nisi est sit amet facilisis magna." }
+        { "metric": "VM Mismatch", "observation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "highlight": true  },
+        { "metric": "Vm Visualization", "observation": "Viverra suspendisse potenti nullam ac tortor vitae purus faucibus.", "highlight": true  },
+        { "metric": "PSTH", "observation": "Amet est placerat in egestas erat imperdiet sed euismod.", "highlight": true  },
+        { "metric": "PSP Counts", "observation": "Ac feugiat amet consectetur adipiscing elit pellentesque habitant morbi.", "highlight": true  },
+        { "metric": "Granger Causality", "observation": "Tincidunt eget nullam non nisi est sit amet facilisis magna." , "highlight": true }
       ],
       "columnConclusion": "Nisl condimentum id venenatis a. In nisl nisi scelerisque eu ultrices vitae auctor eu."
     },

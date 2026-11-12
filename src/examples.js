@@ -10,7 +10,7 @@ export const mockExamplesList = [
     groupId: '2. In-Domain', 
     title: 'XOR In-Domain Case 1', 
     pipeline: pipelineData,
-    highlightedMetrics: ['Accuracy', 'Sensitivity', 'Specificity'], // Easily choose which metrics to highlight in amber
+    highlightedMetrics: ['Accuracy', 'Sensitivity', 'Specificity', 'ISI','Raster', 'KS Test','Van Rossum','Schreiber', 'Cross-Correlation','Multiscale Cross-Correlation','VM Mismatch','Vm Visualization','PSTH','PSP Counts','Granger Causality'],
     body: `One internal neuron is silenced while the system is otherwise evaluated under in-domain conditions.`
   },
   { 
@@ -19,7 +19,7 @@ export const mockExamplesList = [
     stateKey: 'outOfDomain', 
     groupId: '3. Out-of-Domain', 
     title: 'XOR Out-of-Domain Case 1', 
-    highlightedMetrics: ['ISI', 'VM Mismatch'], // Differs dynamically example to example
+    highlightedMetrics: ['ISI', 'VM Mismatch'], // Differs example to example
     body: `When exposed to out-of-domain stimuli, XOR exhibits graceful degradation. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.` 
   },
   { 
